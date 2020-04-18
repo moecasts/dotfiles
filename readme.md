@@ -32,8 +32,7 @@ mount /dev/nvme0n1pY /mnt/boot
 ## write the mirrors you want at the top of the file
 vim /etc/pacman.d/mirrorlist
 
-
-# Install essential packages
+# Install essential packages:qwq
 pacstrap /mnt base base-devel linux linux-firmware
 
 # Fstab
@@ -57,6 +56,8 @@ pacman -S gvim dialog wpa_supplicant networkmanager dhcpcd
 # Localization
 ## uncomment en_US.UTF-8 UTF-8 and other needed locales
 vim /etc/locale.gen
+# generate the locales
+locale-gen
 
 ## Create the locale.conf file, and set the LANG variable accordingly
 echo "LANG=en_US.UTF-8" >> /etc/locale.conf
@@ -70,7 +71,7 @@ vim /etc/hosts
 ### add following content at the tail
 127.0.0.1	localhost
 ::1		localhost
-127.0.1.1	myhostname.localdomain	myhostname
+127.0.0.1	myhostname.localdomain	myhostname
 
 # Root password
 passwd
@@ -95,6 +96,21 @@ reboot
 
 
 # Setup
+
+## Beep
+
+```bash
+# temporary
+## disable
+rmmod pcspkr 
+## enable
+modprobe pcspk
+
+# forever
+echo "rmmod pcspkr" >> /etc/profile
+```
+
+
 
 ## Swap
 
@@ -141,7 +157,7 @@ Server = https://mirrors.ustc.edu.cn/archlinuxcn/$arch
 
 # update
 sudo pacman -Syy
-sudo pacman -S archlinux-keyring
+sudo pacman -S archlinuxcn-keyring
 ```
 
 
@@ -166,7 +182,10 @@ lspci | grep -e VGA -e 3D
 ## show list of open-source video drivers
 pacman -Ss xf86-video
 ## install your video drivers
+### intel
 sudo pacman -S xf86-video-intel
+### amdgpu
+sudo pacman -S xf86-video-amdgpu
 
 # Xorg installation
 sudo pacman -S xorg
@@ -180,8 +199,6 @@ sudo pacman -S alsa-utils
 
 ### Lightdm
 
-
-
 ```bash
 sudo pacman -S lightdm lightdm-gtk-greeter lightdm-gtk-greeter-settings numlockx
 # test
@@ -193,7 +210,7 @@ sudo systemctl enable lightdm
 ## i3
 
 ```bash
-sudo pacman i3-gaps
+sudo pacman -S i3
 ```
 
 ### i3lock-fancy 
