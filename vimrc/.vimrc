@@ -71,6 +71,10 @@ set guifont=FiraCode\ Nerd\ Font\ Mono:style=Regular
 " let g:airline_symbols.notexists = 'Ɇ'
 " let g:airline_symbols.whitespace = 'Ξ'
 
+" 共用剪切板
+set clipboard=unnamed
+vmap <C-c> "+y
+
 " 开启文件类型检查，并且载入与该类型对应的缩进规则。
 filetype plugin indent on
 " 自动缩进
