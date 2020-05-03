@@ -11,6 +11,10 @@ Plug 'preservim/nerdcommenter'
 
 " 目录
 Plug 'preservim/nerdtree'
+Plug 'Xuyuanp/nerdtree-git-plugin'
+
+" Git 状态
+Plug 'airblade/vim-gitgutter'
 
 " 文件类型图标
 Plug 'ryanoasis/vim-devicons'
@@ -19,11 +23,24 @@ Plug 'ryanoasis/vim-devicons'
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 
 " 括号匹配
-Plug 'Raimondi/delimitMate'
+" Plug 'Raimondi/delimitMate'
+
+" 括号补全
+Plug 'jiangmiao/auto-pairs'
 
 " EditorConfig
 Plug 'editorconfig/editorconfig-vim'
+" Pritter
+Plug 'prettier/vim-prettier', {
+  \ 'do': 'yarn install',
+  \ 'for': ['javascript', 'typescript', 'css', 'less', 'scss', 'json', 'graphql', 'markdown', 'vue', 'yaml', 'html'] }
 
+" fzf
+Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
+Plug 'junegunn/fzf.vim'
+
+" 多行编辑
+Plug 'terryma/vim-multiple-cursors'
 call plug#end()
 
 set number
@@ -71,6 +88,8 @@ set guifont=FiraCode\ Nerd\ Font\ Mono:style=Regular
 " let g:airline_symbols.notexists = 'Ɇ'
 " let g:airline_symbols.whitespace = 'Ξ'
 
+" 文件查找
+nmap <C-f> :Files<CR>
 " 共用剪切板
 set clipboard=unnamed
 vmap <C-c> "+y
