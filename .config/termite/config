@@ -1,0 +1,41 @@
+# Nord Theme
+[colors]
+cursor = #d8dee9
+cursor_foreground = #2e3440
+
+foreground = #d8dee9
+foreground_bold = #d8dee9
+# background = rgba(46, 52, 64, 1)
+background = rgba(46, 52, 64, 0.90)
+# background = rgba(64, 64, 64, 0.8)
+# background = rgba(255, 255, 255, 0.2)
+
+# highlight = #4c566a
+highlight = #616e88
+
+color0  = #3b4252
+color1  = #bf616a
+color2  = #a3be8c
+color3  = #ebcb8b
+color4  = #81a1c1
+color5  = #b48ead
+color6  = #88c0d0
+color7  = #e5e9f0
+# color8  = #4c566a
+color8  = #616e88
+color9  = #bf616a
+color10 = #a3be8c
+color11 = #ebcb8b
+color12 = #81a1c1
+color13 = #b48ead
+color14 = #8fbcbb
+color15 = #eceff4
+
+# Fonts
+[options]
+font = FiraCode Nerd Font Mono:style=Regular:antialias=true 14
+font = Source Han Sans CN:style=Bold:antialias=true 14
+font = DejaVu Sans Mono for Powerline:style=Bold:antialias=true 14
+font = Noto Color Emoji 14
+font = Symbola:style=Regular 14
+
