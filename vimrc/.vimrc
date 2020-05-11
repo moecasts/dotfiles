@@ -22,25 +22,34 @@ Plug 'ryanoasis/vim-devicons'
 " 补全
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 
-" 括号匹配
-" Plug 'Raimondi/delimitMate'
-
 " 括号补全
 Plug 'jiangmiao/auto-pairs'
 
 " EditorConfig
 Plug 'editorconfig/editorconfig-vim'
+
 " Pritter
-Plug 'prettier/vim-prettier', {
-  \ 'do': 'yarn install',
-  \ 'for': ['javascript', 'typescript', 'css', 'less', 'scss', 'json', 'graphql', 'markdown', 'vue', 'yaml', 'html'] }
+" Plug 'prettier/vim-prettier', {
+  " \ 'do': 'yarn install',
+  " \ 'for': ['javascript', 'typescript', 'css', 'less', 'scss', 'json', 'graphql', 'markdown', 'vue', 'yaml', 'html'] }
 
 " fzf
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
 
 " 多行编辑
-Plug 'terryma/vim-multiple-cursors'
+" Plug 'terryma/vim-multiple-cursors'
+Plug 'mg979/vim-visual-multi', {'branch': 'master'}
+
+" vim 内终端
+Plug 'voldikss/vim-floaterm'
+
+" vim 起始页
+Plug 'mhinz/vim-startify'
+
+" Emmet
+Plug 'mattn/emmet-vim'
+
 call plug#end()
 
 set number
@@ -87,9 +96,11 @@ set guifont=FiraCode\ Nerd\ Font\ Mono:style=Regular
 " let g:airline_symbols.spell = 'Ꞩ'
 " let g:airline_symbols.notexists = 'Ɇ'
 " let g:airline_symbols.whitespace = 'Ξ'
+" airline
+let g:airline#extensions#tabline#enabled = 1
 
 " 文件查找
-nmap <C-f> :Files<CR>
+nmap <C-p> :Files<CR>
 " 共用剪切板
 set clipboard=unnamed
 vmap <C-c> "+y
@@ -110,16 +121,49 @@ set showmatch
 
 let mapleader = ','
 
+" 标签页
+noremap <C-T> <Esc>:tabnew<CR>
+noremap <C-L> <Esc>:tabnext<CR>
+noremap <C-H> <Esc>:tabprevious<CR>
+
+" NERDTree
 nnoremap <leader>n :NERDTreeToggle<CR>
-" 启动开启
-" autocmd VimEnter * NERDTree
-" 聚焦于文本
-autocmd VimEnter * wincmd p
-autocmd BufNew * wincmd l
+" 没有选择文件时，启动打开侧边栏
+autocmd StdinReadPre * let s:std_in=1
+autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | wincmd p| ene | endif
+
+" 打开目录时自动打开侧边栏，并聚焦于编辑区
+" autocmd StdinReadPre * let s:std_in=1
+" autocmd VimEnter * if argc() == 1 && isdirectory(argv()[0]) && !exists("s:std_in") | exe 'NERDTree' argv()[0] | wincmd p | ene | endif
+
+" 打开目录时自动打开侧边栏，并聚焦于目录
+" autocmd StdinReadPre * let s:std_in=1
+autocmd VimEnter * if argc() == 1 && isdirectory(argv()[0]) && !exists("s:std_in") | wincmd p | ene | exe 'NERDTree' argv()[0] | endif
+
+" 当只剩下 NERDTree 窗口时，退出
+autocmd BufEnter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
+
+" 避免在 NERDTree 窗口打开文件
+autocmd BufEnter * if bufname('#') =~# "^NERD_tree_" && winnr('$') > 1 | b# | endif
+
 " 显示 .* 文件
 let NERDTreeShowHidden=1
 
 let g:NERDSpaceDelims = 1
+
+
+" 内置终端
+let g:floaterm_keymap_new = '<Leader>fn'
+
+" Emmet
+let g:user_emmet_leader_key = '<TAB>'
+
+" auto-pairs
+let g:AutoPairsShortcutBackInsert = '<M-b>'
+
+" Pretter
+command! -nargs=0 Prettier :CocCommand prettier.formatFile
+
 " Coc.nvim start
 " TextEdit might fail if hidden is not set.
 set hidden
