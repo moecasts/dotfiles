@@ -1,4 +1,7 @@
-#include "/home/clusteramaryllis/Developments/dotfiles/Xresources/theme/nord.Xresources"
+! #include "/home/clusteramaryllis/Developments/dotfiles/Xresources/theme/ayu-dark.Xresources"
+! #include "/home/clusteramaryllis/Developments/dotfiles/Xresources/themes/nord.Xresources"
+#include "/home/clusteramaryllis/Developments/dotfiles/Xresources/themes/one-dark.Xresources"
+! #include "/home/clusteramaryllis/Developments/dotfiles/Xresources/themes/ayu-light.Xresources"
 
 ! Xvt.dpi: 32       
 ! Xft.antialias: true
@@ -7,11 +10,21 @@
 ! Xft.autohint:  false
 ! Xft.hintstyle: hintslight
 ! Xft.lcdfilter: lcddefault
+
+
+
+URxvt*inheritPixmap:              true
+URxvt*transparent:                true
+! URxvt*shading: 0 to 99 darkens, 101 to 200 lightens
+URxvt*shading:                    20
+
 URxvt.inputMethod:                fcitx 
 
 URxvt.font:                       xft:FiraCode Nerd Font Mono:size=14:style=Regular:antialias=true,\
                                   xft:Source Han Sans CN:size=14:style=Bold:antialias=true,\
                                   xft:DejaVu Sans Mono for Powerline:style=Bold:size=14:antialias=true,\
+                                  xft:Noto Color Emoji:style=Regular,\
+                                  xft:Symbola:style=Regular,\
                                   xft:siji
 
 URxvt*scrollBar:                  false

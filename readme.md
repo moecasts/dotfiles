@@ -202,7 +202,7 @@ sudo pacman -S alsa-utils
 ```bash
 sudo pacman -S lightdm lightdm-gtk-greeter lightdm-gtk-greeter-settings numlockx
 # test
-lightdm --test-mod --debug
+lightdm --test-mode --debug
 # auto start
 sudo systemctl enable lightdm
 ```
@@ -210,7 +210,7 @@ sudo systemctl enable lightdm
 ## i3
 
 ```bash
-sudo pacman -S i3
+sudo pacman -S i3 polybar picom rofi
 ```
 
 ### i3lock-fancy 
@@ -262,7 +262,7 @@ sudo pacman -S fcitx-im fcitx-configtool fcitx-googlepinyin
 # sudo vim ~/.xprofile # 如果使用 bash 作为默认 shell
 sudo vim ~/.zprofile # 如果使用 zsh 作为默认 shell
 
-# 添加一下内容
+# 添加以下内容
 export GTK_IM_MODULE=fcitx
 export QT_IM_MODULE=fcitx
 export XMODIFIERS="@im=fcitx"
