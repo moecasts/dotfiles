@@ -8,6 +8,7 @@ Plug 'arcticicestudio/nord-vim'
 
 " 注释
 Plug 'preservim/nerdcommenter'
+" Plug 'tomtom/tcomment_vim'
 
 " 目录
 Plug 'preservim/nerdtree'
@@ -16,11 +17,14 @@ Plug 'Xuyuanp/nerdtree-git-plugin'
 " Git 状态
 Plug 'airblade/vim-gitgutter'
 
+" Git blame
+Plug 'APZelos/blamer.nvim'
+
 " 文件类型图标
 Plug 'ryanoasis/vim-devicons'
 
 " 补全
-Plug 'neoclide/coc.nvim', {'branch': 'release', 'do': ':CocInstall coc-json coc-tsserver coc-go coc-css coc-phpls coc-python coc-html coc-sh coc-clangd coc-prettier coc-pairs'}
+Plug 'neoclide/coc.nvim', {'branch': 'release', 'do': ':CocInstall coc-json coc-tsserver coc-go coc-css coc-phpls coc-html coc-sh coc-clangd coc-prettier coc-pairs'}
 
 " 括号补全
 " Plug 'jiangmiao/auto-pairs'
@@ -54,10 +58,13 @@ Plug 'mhinz/vim-startify'
 " Emmet
 Plug 'mattn/emmet-vim'
 
+
 " For React
 Plug 'leafgarland/typescript-vim'
 Plug 'peitalin/vim-jsx-typescript'
 Plug 'styled-components/vim-styled-components', { 'branch': 'main' }
+
+Plug 'sheerun/vim-polyglot'
 
 " For Golang
 Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
@@ -65,7 +72,33 @@ Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
 " For docs
 Plug 'kkoomen/vim-doge', { 'do': { -> doge#install() } }
 
+" Code formatter
+Plug 'google/vim-maktaba'
+Plug 'google/vim-codefmt'
+Plug 'google/vim-glaive'
+
+" number
+Plug 'jeffkreeftmeijer/vim-numbertoggle'
+
 call plug#end()
+
+let mapleader = ','
+
+" Autoformatting
+augroup autoformat_settings
+  autocmd FileType bzl AutoFormatBuffer buildifier
+  autocmd FileType c,cpp,proto AutoFormatBuffer clang-format
+  autocmd FileType dart AutoFormatBuffer dartfmt
+  autocmd FileType go AutoFormatBuffer gofmt
+  autocmd FileType gn AutoFormatBuffer gn
+  " autocmd FileType html,css,sass,scss,less,json AutoFormatBuffer js-beautify
+  autocmd FileType java AutoFormatBuffer google-java-format
+  autocmd FileType python AutoFormatBuffer yapf
+augroup END
+
+call glaive#Install()
+Glaive codefmt clang_format_executable='/usr/local/bin/clang-format'
+Glaive codefmt clang_format_style='{ BasedOnStyle: google, AlignConsecutiveAssignments: true, AlignConsecutiveDeclarations: true }'
 
 " Coc.nvim start
 " TextEdit might fail if hidden is not set.
@@ -87,12 +120,12 @@ set shortmess+=c
 
 " Always show the signcolumn, otherwise it would shift the text each time
 " diagnostics appear/become resolved.
-if has("patch-8.1.1564")
-  " Recently vim can merge signcolumn and number column into one
-  set signcolumn=number
-else
-  set signcolumn=yes
-endif
+" if has("nvim-0.5.0") || has("patch-8.1.1564")
+  " " Recently vim can merge signcolumn and number column into one
+  " set signcolumn=number
+" else
+  " set signcolumn=yes
+" endif
 
 " Use tab for trigger completion with characters ahead and navigate.
 " NOTE: Use command ':verbose imap <tab>' to make sure tab is not mapped by
@@ -232,6 +265,7 @@ nnoremap <silent><nowait> <space>p  :<C-u>CocListResume<CR>
 " Coc.nvim end
 
 
+
 set number
 syntax on 
 set encoding=utf-8
@@ -251,7 +285,8 @@ colorscheme nord
 
 " nerdcommenter
 let g:NERDCustomDelimiters={
-	\ 'javascript': { 'left': '//', 'right': '', 'leftAlt': '{/*', 'rightAlt': '*/}' },
+  \ 'javascriptreact': { 'left': '//', 'right': '', 'leftAlt': '{/*', 'rightAlt': '*/}' },
+  \ 'typescriptreact': { 'left': '//', 'right': '', 'leftAlt': '{/*', 'rightAlt': '*/}' },
 \}
 
 " airline 配置
@@ -312,20 +347,19 @@ set showmatch
 " let g:AutoPairsCenterLine = 0
 " imap <C-e> <M-e>
 
-let mapleader = ','
 
 " 键位映射
 inoremap jk <esc>
 
 " 标签页
-nnoremap <Leader>th  :tabfirst<CR>
-nnoremap <Leader>tj  :tabnext<CR>
-nnoremap <Leader>tk  :tabprev<CR>
-nnoremap <Leader>tl  :tablast<CR>
-nnoremap <Leader>tt  :tabedit<Space>
-nnoremap <Leader>tn  :tabnew<CR>
-nnoremap <Leader>tm  :tabm<Space>
-nnoremap <Leader>td  :tabclose<CR>
+nnoremap <leader>th  :tabfirst<CR>
+nnoremap <leader>tj  :tabnext<CR>
+nnoremap <leader>tk  :tabprev<CR>
+nnoremap <leader>tl  :tablast<CR>
+nnoremap <leader>tt  :tabedit<Space>
+nnoremap <leader>tn  :tabnew<CR>
+nnoremap <leader>tm  :tabm<Space>
+nnoremap <leader>td  :tabclose<CR>
 
 " Buffer 
 set laststatus=2 statusline=%02n:%<%f\ %h%m%r%=%-14.(%l,%c%V%)\ %P
@@ -361,9 +395,11 @@ let NERDTreeIgnore=['\.swp']
 " Nerd Commenter
 let g:NERDSpaceDelims = 1
 
-
 " 内置终端
-let g:floaterm_keymap_new = '<Leader>fn'
+let g:floaterm_keymap_new    = '<leader>fn'
+let g:floaterm_keymap_prev   = '<leader>fh'
+let g:floaterm_keymap_next   = '<leader>fl'
+let g:floaterm_keymap_toggle = '<leader>ft'
 
 " fzf
 let $FZF_DEFAULT_COMMAND='rg --files --hidden'
@@ -375,10 +411,18 @@ let $FZF_DEFAULT_COMMAND='rg --files --hidden'
 " let g:AutoPairsShortcutBackInsert = '<M-b>'
 
 " Pretter
-command! -nargs=0 Prettier :CocCommand prettier.formatFile
+" command! -nargs=0 Prettier :CocCommand prettier.formatFile
 
 " coc-pairs <CR>
 inoremap <silent><expr> <cr> pumvisible() ? coc#_select_confirm() : "\<c-g>u\<cr>\<c-r>=coc#on_enter()\<CR>"
+
+" GitGutter
+set signcolumn=yes
+" let g:gitgutter_sign_allow_clobber = 1
+
+" Blamer
+let g:blamer_enabled = 1
+let g:blamer_delay = 500
 
 " 斜体
 let &t_ZH="\e[3m"
