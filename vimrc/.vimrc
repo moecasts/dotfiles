@@ -57,6 +57,7 @@ Plug 'leafgarland/typescript-vim'
 Plug 'peitalin/vim-jsx-typescript'
 Plug 'styled-components/vim-styled-components', { 'branch': 'main' }
 
+" Language
 Plug 'sheerun/vim-polyglot'
 
 " For Golang
