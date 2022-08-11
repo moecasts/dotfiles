@@ -14,6 +14,7 @@
   "_coc.preferences.formatOnSaveFiletypes": [
     "python"
   ],
+  "eslint.autoFixOnSave": true,
   "coc.preferences.jumpCommand": "drop",
   "coc.preferences.rootPatterns": [
     ".git",

@@ -383,7 +383,7 @@ autocmd BufEnter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isT
 autocmd BufEnter * if bufname('#') =~# "^NERD_tree_" && winnr('$') > 1 | b# | endif
 
 " 设置 NERDTree 大小
-let g:NERDTreeWinSize=50
+" let g:NERDTreeWinSize=50
  
 " 显示 .* 文件
 let NERDTreeShowHidden=1
