@@ -23,6 +23,10 @@
   "prettier.eslintIntegration": true,
   "prettier.stylelintIntegration": false,
   "prettier.requireConfig": true,
+  "javascript.preferences.quoteStyle": "single",
+  "typescript.preferences.quoteStyle": "single",
+  "javascript.format.insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces": true,
+  "typescript.format.insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces": true,
   "python.pythonPath": "python3",
   "python.formatting.provider": "autopep8",
   "go.goplsOptions": {
