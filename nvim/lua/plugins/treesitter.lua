@@ -1,3 +1,4 @@
+local util = require('util')
 return {
   {
     'nvim-treesitter/nvim-treesitter',
@@ -56,9 +57,23 @@ return {
         enable = true,
       },
     },
-    ---@param opts TSConfig
+    ---@param opns TSConfig
     config = function(_, opts)
       require('nvim-treesitter.configs').setup(opts)
+
+      vim.keymap.set(
+        'n',
+        '<leader>tsh',
+        '<CMD>TSBufToggle highlight<CR>',
+        { buffer = buffer, desc = 'Treesitter toggle highlight' }
+      )
+
+      vim.keymap.set(
+        'n',
+        '<leader>tsa',
+        util.toggle_treesitter_modules,
+        { buffer = buffer, desc = 'Treesitter toggle all' }
+      )
     end,
   },
 
