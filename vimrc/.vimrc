@@ -24,11 +24,10 @@ Plug 'APZelos/blamer.nvim'
 Plug 'ryanoasis/vim-devicons'
 
 " 补全
-Plug 'neoclide/coc.nvim', {'branch': 'release', 'do': ':CocInstall coc-json coc-tsserver coc-go coc-css coc-phpls coc-html coc-sh coc-clangd coc-prettier coc-pairs'}
+Plug 'neoclide/coc.nvim', {'branch': 'release', 'do': ':CocInstall coc-json coc-tsserver coc-go coc-css coc-phpls coc-pyright coc-html coc-sh coc-clangd coc-prettier coc-pairs'}
 
-" 括号补全
-" Plug 'jiangmiao/auto-pairs'
-" Plug 'Raimondi/delimitMate'
+" Tagbar
+Plug 'liuchengxu/vista.vim'
 
 " Surround
 Plug 'tpope/vim-surround'
@@ -36,17 +35,11 @@ Plug 'tpope/vim-surround'
 " EditorConfig
 Plug 'editorconfig/editorconfig-vim'
 
-" Pritter
-" Plug 'prettier/vim-prettier', {
-" " \ 'do': 'yarn install',
-" " \ 'for': ['javascript', 'typescript', 'css', 'less', 'scss', 'json', 'graphql', 'markdown', 'vue', 'yaml', 'html'] }
-
 " fzf
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
 
 " 多行编辑
-" Plug 'terryma/vim-multiple-cursors'
 Plug 'mg979/vim-visual-multi', {'branch': 'master'}
 
 " vim 内终端
@@ -388,6 +381,9 @@ autocmd BufEnter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isT
 " 避免在 NERDTree 窗口打开文件
 autocmd BufEnter * if bufname('#') =~# "^NERD_tree_" && winnr('$') > 1 | b# | endif
 
+" 设置 NERDTree 大小
+let g:NERDTreeWinSize=50
+ 
 " 显示 .* 文件
 let NERDTreeShowHidden=1
 let NERDTreeIgnore=['\.swp']
@@ -423,6 +419,10 @@ set signcolumn=yes
 " Blamer
 let g:blamer_enabled = 1
 let g:blamer_delay = 500
+
+" Vista
+let g:vista_default_executive = 'coc'
+let g:vista_sidebar_width = 50
 
 " 斜体
 let &t_ZH="\e[3m"
