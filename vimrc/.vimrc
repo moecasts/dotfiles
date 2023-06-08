@@ -89,7 +89,7 @@ let mapleader = ','
 
 nnoremap <leader>n :NERDTreeToggle<CR>
 " 启动开启
-autocmd VimEnter * NERDTree
+" autocmd VimEnter * NERDTree
 " 聚焦于文本
 autocmd VimEnter * wincmd p
 autocmd BufNew * wincmd l
@@ -138,8 +138,7 @@ inoremap <silent><expr> <c-space> coc#refresh()
 
 " Use <cr> to confirm completion, `<C-g>u` means break undo chain at current
 " position. Coc only does snippet and additional edit on confirm.
-if has('patch8.1.1068')
-  " Use `complete_info` if your (Neo)Vim version supports it.
+if exists('*complete_info')
   inoremap <expr> <cr> complete_info()["selected"] != "-1" ? "\<C-y>" : "\<C-g>u\<CR>"
 else
   imap <expr> <cr> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
