@@ -10,8 +10,9 @@ M.on_attach = function(client, bufnr)
   -- See `:help vim.lsp.*` for documentation on any of the below functions
   local bufopts = { noremap = true, silent = true }
   local keymap = vim.api.nvim_buf_set_keymap
-  keymap(bufnr, 'n', 'gD', '<cmd>lua vim.lsp.buf.declaration()<CR>', bufopts)
   keymap(bufnr, 'n', 'gd', '<cmd>Telescope lsp_definitions<CR>', bufopts)
+  keymap(bufnr, 'n', 'gdv', '<cmd>lua require"telescope.builtin".lsp_definitions({ jump_type="vsplit" })<CR>', bufopts)
+  keymap(bufnr, 'n', 'gds', '<cmd>lua require"telescope.builtin".lsp_definitions({ jump_type="split" })<CR>', bufopts)
   keymap(bufnr, 'n', 'K', '<cmd>lua vim.lsp.buf.hover()<CR>', bufopts)
   keymap(bufnr, 'n', 'gI', '<cmd>Telescope lsp_implementations<cr>', bufopts)
   keymap(bufnr, 'n', 'gr', '<cmd>Telescope lsp_references<cr>', bufopts)
