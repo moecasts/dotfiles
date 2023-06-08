@@ -1,0 +1,66 @@
+#include "/home/clusteramaryllis/Developments/config/dotfiles/theme/nord.Xresources"
+
+! Xft.dpi:       96
+! Xft.antialias: true
+! Xft.hinting:   true
+! Xft.rgba:      rgb
+! Xft.autohint:  false
+! Xft.hintstyle: hintslight
+! Xft.lcdfilter: lcddefault
+
+
+URxvt.font:                       xft:FiraCode Nerd Font Mono:size=14:style=Regular:antialias=true,xft:Source Han Sans CN:size=14:style=Bold:antialias=true
+URxvt*scrollBar:                  false
+URxvt*mouseWheelScrollPage:       false
+URxvt*cursorBlink:                true
+
+! Normal copy-paste keybindings without perls
+URxvt.iso14755:                   false
+URxvt.keysym.Shift-Control-V:     eval:paste_clipboard
+URxvt.keysym.Shift-Control-C:     eval:selection_to_clipboard
+! !Xterm escape codes, word by word movement
+URxvt.keysym.Control-Left:        \033[1;5D
+URxvt.keysym.Shift-Control-Left:  \033[1;6D
+URxvt.keysym.Control-Right:       \033[1;5C
+URxvt.keysym.Shift-Control-Right: \033[1;6C
+URxvt.keysym.Control-Up:          \033[1;5A
+URxvt.keysym.Shift-Control-Up:    \033[1;6A
+URxvt.keysym.Control-Down:        \033[1;5B
+URxvt.keysym.Shift-Control-Down:  \033[1;6B
+! Rxvt.perl-ext-common:             ...,clipboard
+! URxvt.keysym.M-C-c:               perl:clipboard:copy
+! URxvt.keysym.M-v:                 perl:clipboard:paste
+! URxvt.keysym.M-C-v:               perl:clipboard:paste_escaped
+! URxvt*termName:                   string
+! URxvt*geometry:                   geometry
+! URxvt*chdir:                      string
+! URxvt*loginShell:                 boolean
+! URxvt*multiClickTime:             number
+! URxvt*jumpScroll:                 boolean
+! URxvt*skipScroll:                 boolean
+! URxvt*pastableTabs:               boolean
+! URxvt*scrollstyle:                plain
+! URxvt*scrollBar_right:            boolean
+! URxvt*scrollBar_floating:         true
+! URxvt*scrollBar_align:            mode
+! URxvt*thickness:                  number
+! URxvt*scrollTtyOutput:            boolean
+! URxvt*scrollTtyKeypress:          boolean
+! URxvt*scrollWithBuffer:           boolean
+! URxvt*tintColor:                  !7DA55
+! URxvt*blurRadius:                 HxV
+! URxvt*fading:                     number
+! URxvt*fadeColor:                  color
+! URxvt*utmpInhibit:                boolean
+! URxvt*urgentOnBell:               boolean
+! URxvt*visualBell:                 boolean
+! URxvt*mapAlert:                   boolean
+! URxvt*meta8:                      boolean
+! URxvt*tripleclickwords:           boolean
+! URxvt*insecure:                   boolean
+! URxvt*cursorUnderline:            boolean
+! URxvt*pointerBlank:               boolean
+! URxvt*color0:                     color
+! URxvt*color1:                     color
+! URxvt*color2:                     color
+! URxvt*color3:                     color
