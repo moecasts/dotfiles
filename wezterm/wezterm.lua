@@ -5,7 +5,8 @@ return {
   font_size = 16,
 
   -- apperance
-  color_scheme = "nord",
+  -- color_scheme = "nord",
+  color_scheme = "nordfox",
 
   -- keymap
   keys = {
