@@ -1,0 +1,33 @@
+{
+  "coc.preferences.formatOnSaveFiletypes": [
+    "css",
+    "less",
+    "scss",
+    "sass",
+    "markdown",
+    "javascript",
+    "javascriptreact",
+    "typescript",
+    "typescriptreact",
+    "json"
+  ],
+  "_coc.preferences.formatOnSaveFiletypes": [
+    "python"
+  ],
+  "coc.preferences.jumpCommand": "drop",
+  "coc.preferences.rootPatterns": [
+    ".git",
+    ".hg",
+    ".projections.json"
+  ],
+  "prettier.eslintIntegration": true,
+  "prettier.stylelintIntegration": false,
+  "prettier.requireConfig": true,
+  "python.pythonPath": "python3",
+  "python.formatting.provider": "autopep8",
+  "go.goplsOptions": {
+    "experimentalWorkspaceModule": true
+  },
+  "clangd.path": "/Users/caster/.config/coc/extensions/coc-clangd-data/install/11.0.0/clangd_11.0.0/bin/clangd",
+  "coc-proto3.compileOnSave": false
+}
