@@ -394,10 +394,19 @@ let NERDTreeIgnore=['\.swp']
 let g:NERDSpaceDelims = 1
 
 " 内置终端
-let g:floaterm_keymap_new    = '<leader>fn'
-let g:floaterm_keymap_prev   = '<leader>fh'
-let g:floaterm_keymap_next   = '<leader>fl'
-let g:floaterm_keymap_toggle = '<leader>ft'
+let g:floaterm_keymap_new    = '<F6>'
+let g:floaterm_keymap_prev   = '<F7>'
+let g:floaterm_keymap_next   = '<F8>'
+let g:floaterm_keymap_toggle = '<F9>'
+
+nnoremap   <silent>   <F7>    :FloatermNew<CR>
+tnoremap   <silent>   <F7>    <C-\><C-n>:FloatermNew<CR>
+nnoremap   <silent>   <F8>    :FloatermPrev<CR>
+tnoremap   <silent>   <F8>    <C-\><C-n>:FloatermPrev<CR>
+nnoremap   <silent>   <F9>    :FloatermNext<CR>
+tnoremap   <silent>   <F9>    <C-\><C-n>:FloatermNext<CR>
+nnoremap   <silent>   <F12>   :FloatermToggle<CR>
+tnoremap   <silent>   <F12>   <C-\><C-n>:FloatermToggle<CR>
 
 " fzf
 let $FZF_DEFAULT_COMMAND='rg --files --hidden'
