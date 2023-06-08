@@ -1,0 +1,14 @@
+backend = "glx";
+
+opacity-rule = [
+  # "95:class_g = 'Termite'",
+];
+
+blur-background = true;
+blur-background-frame = true;
+blur-background-fixed = true;
+
+blur-kern = "7x7box";
+blur-method = "kawase";
+blur-strength = 80;
+
