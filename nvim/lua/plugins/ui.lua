@@ -118,6 +118,14 @@ return {
     },
   },
 
+  -- workflow scope
+  {
+    'tiagovla/scope.nvim',
+    config = function()
+      require('scope').setup({ restore_state = false })
+    end,
+  },
+
   -- noicer ui
   {
     'folke/noice.nvim',
