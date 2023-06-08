@@ -268,9 +268,6 @@ set autoread
 
 " 主题
 set t_Co=256
-" if (has("termguicolors"))
-  " set termguicolors
-" endif
 
 colorscheme nord
 " let g:nord_bold = 1
@@ -358,6 +355,10 @@ nnoremap <leader>td  :tabclose<CR>
 " Buffer 
 set laststatus=2 statusline=%02n:%<%f\ %h%m%r%=%-14.(%l,%c%V%)\ %P
 
+
+" coc-explorer
+nmap <leader>e :CocCommand explorer<CR>
+
 " NERDTree
 nnoremap <leader>n :NERDTreeToggle<CR>
 
@@ -436,3 +437,4 @@ highlight htmlArg cterm=italic
 highlight Comment cterm=italic
 highlight Type    cterm=italic
 highlight Keyword cterm=italic
+
