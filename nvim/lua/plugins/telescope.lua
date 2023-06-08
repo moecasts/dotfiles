@@ -65,6 +65,9 @@ return {
     },
     opts = {
       defaults = {
+        path_display = {
+          'smart',
+        },
         prompt_prefix = '   ',
         selection_caret = ' ',
         vimgrep_arguments = {
