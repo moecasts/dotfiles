@@ -1,0 +1,22 @@
+{
+  "name": "moe-snippets",
+  "contributes": {
+    "snippets": [
+      {
+        "language": [
+          "javascript",
+          "javascriptreact",
+          "typescript",
+          "typescriptreact",
+          "vue",
+          "svelte",
+          "css",
+          "scss",
+          "sass",
+          "less"
+        ],
+        "path": "./javascript.json"
+      }
+    ]
+  }
+}

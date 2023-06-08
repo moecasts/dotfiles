@@ -1,0 +1,9 @@
+{
+  "delimiter comment": {
+    "prefix": "dc",
+    "body": [
+      "/* --------------------------------- $0 ---------------------------------------- */"
+    ],
+    "description": "a delimiter comment"
+  }
+}
