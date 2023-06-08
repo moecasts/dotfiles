@@ -65,8 +65,22 @@ return {
     },
     opts = {
       defaults = {
-        prompt_prefix = ' ',
+        prompt_prefix = '   ',
         selection_caret = ' ',
+        vimgrep_arguments = {
+          'rg',
+          '--color=never',
+          '--no-heading',
+          '--with-filename',
+          '--line-number',
+          '--column',
+          '--smart-case',
+          '--hidden',
+          '--glob=!.git/',
+        },
+        preview = {
+          treesitter = false,
+        },
         mappings = {
           i = {
             ['<c-t>'] = function(...)
@@ -99,7 +113,8 @@ return {
         },
       },
     },
-    config = function()
+    config = function(_, opts)
+      require('telescope').setup(opts)
       require('telescope').load_extension('lazygit')
     end,
   },
