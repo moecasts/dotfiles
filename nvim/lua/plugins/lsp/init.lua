@@ -32,7 +32,26 @@ return {
       -- LSP Server Settings
       ---@type lspconfig.options
       servers = {
-        tsserver = {},
+        tsserver = {
+          settings = {
+            javascript = {
+              format = {
+                semicolons = 'insert',
+              },
+              preferences = {
+                quoteStyle = 'single',
+              },
+            },
+            typescript = {
+              format = {
+                semicolons = 'insert',
+              },
+              preferences = {
+                quoteStyle = 'single',
+              },
+            },
+          },
+        },
         jsonls = {},
         cssls = {},
         html = {},
@@ -182,9 +201,9 @@ return {
         sources = {
           -- code spell
           nls.builtins.diagnostics.cspell.with({
-            diagnostics_postprocess = function (diagnostic)
+            diagnostics_postprocess = function(diagnostic)
               diagnostic.severity = vim.diagnostic.severity.HINT
-            end
+            end,
           }),
           nls.builtins.code_actions.cspell,
 
