@@ -62,4 +62,9 @@ return {
       end,
     },
   },
+
+  -- diffview
+  {
+    'sindrets/diffview.nvim',
+  },
 }
