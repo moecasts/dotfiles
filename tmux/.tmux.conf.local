@@ -447,11 +447,14 @@ tmux_conf_uninstall_plugins_on_reload=true
 # # /!\ do not remove the previous line
 
 # -- default shell --------------------------------------------------------------
-set-option -g default-shell /usr/bin/zsh
+set-option -g default-shell /bin/zsh
 
+set-option -g allow-passthrough on
 # -- italic fonts --------------------------------------------------------------
-set -g default-terminal "xterm-256color"
-set -as terminal-overrides ',xterm*:sitm=\E[3m'
+# set -as terminal-overrides ',xterm*:sitm=\E[3m'
+# set-option -sa terminal-overrides ",xterm*:Tc:sitm=\E[3m"
+set-option -g default-terminal "xterm-256color"
+set-option -ga terminal-overrides ',xterm*:Tc:sitm=\E[3m'
 
 # -- color themes ----------------------------------------------------------
 set -g @plugin "arcticicestudio/nord-tmux"
