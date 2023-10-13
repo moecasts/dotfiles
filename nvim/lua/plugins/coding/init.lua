@@ -202,4 +202,7 @@ return {
       require('textcase').setup({})
     end,
   },
+
+  -- diffview
+  { 'sindrets/diffview.nvim' },
 }
