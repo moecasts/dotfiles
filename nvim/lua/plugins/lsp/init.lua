@@ -61,6 +61,7 @@ return {
         yamlls = {},
         rust_analyzer = {},
         codelldb = {},
+        gopls = {},
       },
 
       setup = {
@@ -219,6 +220,14 @@ return {
           nls.builtins.diagnostics.eslint_d,
           nls.builtins.code_actions.eslint_d,
 
+          -- clang_format
+          nls.builtins.formatting.clang_format.with({
+            extra_args = {
+              '--style',
+              '{ BasedOnStyle: google, AlignConsecutiveAssignments: true, AlignConsecutiveDeclarations: true }',
+            },
+          }),
+
           -- typescript
           require('typescript.extensions.null-ls.code-actions'),
         },
@@ -240,6 +249,7 @@ return {
         'flake8',
         'codelldb',
         'cspell',
+        'clang-format',
       },
     },
     ---@param opts MasonSettings | {ensure_installed: string[]}
