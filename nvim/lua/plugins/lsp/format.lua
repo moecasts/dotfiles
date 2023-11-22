@@ -27,7 +27,8 @@ function M.format()
   local have_nls = #require('null-ls.sources').get_available(ft, 'NULL_LS_FORMATTING') > 0
 
   vim.lsp.buf.format(vim.tbl_deep_extend('force', {
-    async = true,
+    -- async = true,
+    async = false,
     bufnr = buf,
     filter = function(client)
       if have_nls then

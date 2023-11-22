@@ -5,5 +5,13 @@
       "/* --------------------------------- $0 ---------------------------------------- */"
     ],
     "description": "a delimiter comment"
+  },
+  "third party hidden": {
+    "prefix": "tph",
+    "body": [
+      "<ThirdPartyComponent id=\"SelfhostDefaultHidden\">",
+      "</ThirdPartyComponent>"
+    ],
+    "description": "ThirdPartyComponent"
   }
 }
