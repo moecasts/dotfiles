@@ -227,4 +227,12 @@ return {
       require('transparent').setup({})
     end,
   },
+
+  -- colorizer
+  {
+    'norcalli/nvim-colorizer.lua',
+    config = function()
+      require('colorizer').setup()
+    end,
+  },
 }
