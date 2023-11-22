@@ -458,3 +458,7 @@ set-option -ga terminal-overrides ',xterm*:Tc:sitm=\E[3m'
 
 # -- color themes ----------------------------------------------------------
 set -g @plugin "arcticicestudio/nord-tmux"
+
+# -- bindings ----------------------------------------------------------
+bind-key C-J swap-window -t -1\; select-window -t -1
+bind-key C-K swap-window -t +1\; select-window -t +1
