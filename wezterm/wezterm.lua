@@ -1,4 +1,5 @@
 local wezterm = require("wezterm")
+
 return {
   -- font
   font = wezterm.font("FiraCode Nerd Font Mono", { stretch = "Expanded", weight = "Regular" }),
@@ -14,5 +15,9 @@ return {
     { key = "LeftArrow", mods = "OPT", action = wezterm.action({ SendString = "\x1bb" }) },
     -- Make Option-Right equivalent to Alt-f; forward-word
     { key = "RightArrow", mods = "OPT", action = wezterm.action({ SendString = "\x1bf" }) },
+    -- Make Option-{  equivalent to Alt-{; move tab previous
+    { key = "{", mods = "SHIFT|OPT", action = wezterm.action.MoveTabRelative(-1) },
+    -- Make Option-}  equivalent to Alt-}; move tab next
+    { key = "}", mods = "SHIFT|OPT", action = wezterm.action.MoveTabRelative(1) },
   },
 }
