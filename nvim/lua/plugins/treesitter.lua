@@ -34,7 +34,7 @@ return {
       context_commentstring = { enable = true, enable_autocmd = false },
       ensure_installed = {
         'bash',
-        'help',
+        'vimdoc',
         'html',
         'javascript',
         'json',
