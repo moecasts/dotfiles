@@ -60,7 +60,7 @@ return {
         bashls = {},
         yamlls = {},
         rust_analyzer = {},
-        codelldb = {},
+        -- codelldb = {},
         gopls = {},
       },
 
