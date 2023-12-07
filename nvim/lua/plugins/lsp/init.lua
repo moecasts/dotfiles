@@ -189,7 +189,7 @@ return {
 
   -- formatters
   {
-    'jose-elias-alvarez/null-ls.nvim',
+    'nvimtools/none-ls.nvim',
     event = { 'BufReadPre', 'BufNewFile' },
     dependencies = { 'mason.nvim' },
     opts = function()
@@ -237,7 +237,6 @@ return {
 
   -- cmdline tools and lsp servers
   {
-
     'williamboman/mason.nvim',
     cmd = 'Mason',
     keys = { { '<leader>cm', '<cmd>Mason<cr>', desc = 'Mason' } },
