@@ -41,10 +41,36 @@ return {
       'saadparwaiz1/cmp_luasnip',
       -- lspkind
       'onsails/lspkind-nvim',
+
+      -- copilot
+      {
+        'zbirenbaum/copilot-cmp',
+        dependencies = 'copilot.lua',
+        opts = {},
+        config = function(_, opts)
+          local copilot_cmp = require('copilot_cmp')
+          copilot_cmp.setup(opts)
+          -- attach cmp source whenever copilot attaches
+          -- fixes lazy-loading issues with the copilot cmp source
+          require('util').lsp.on_attach(function(client)
+            if client.name == 'copilot' then
+              copilot_cmp._on_insert_enter({})
+            end
+          end)
+        end,
+      },
     },
     opts = function()
       local cmp = require('cmp')
       local lspkind = require('lspkind')
+
+      lspkind.init({
+        symbol_map = {
+          Copilot = '',
+        },
+      })
+
+      vim.api.nvim_set_hl(0, 'CmpItemKindCopilot', require('util').ui.fg('Character'))
 
       return {
         completion = {
@@ -65,6 +91,11 @@ return {
           ['<CR>'] = cmp.mapping.confirm({ select = true }), -- Accept currently selected item. Set `select` to `false` to only confirm explicitly selected items.
         }),
         sources = cmp.config.sources({
+          {
+            name = 'copilot',
+            group_index = 1,
+            priority = 100,
+          },
           { name = 'nvim_lsp' },
           { name = 'luasnip' },
           { name = 'buffer' },
@@ -164,11 +195,23 @@ return {
   },
 
   -- copilot
+  -- {
+  --   'github/copilot.vim',
+  --   keys = {
+  --     { '<leader>cg', '<cmd>Copilot<cr>', desc = 'Copilot' },
+  --   },
+  -- },
   {
-    'github/copilot.vim',
-    keys = {
-      { '<leader>cg', '<cmd>Copilot<cr>', desc = 'Copilot' },
-    },
+    'zbirenbaum/copilot.lua',
+    cmd = 'Copilot',
+    event = 'InsertEnter',
+    config = function()
+      require('copilot').setup({
+        suggestion = {
+          auto_trigger = true,
+        },
+      })
+    end,
   },
 
   -- splitjoin

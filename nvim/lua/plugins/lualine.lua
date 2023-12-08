@@ -4,9 +4,13 @@ return {
     'nvim-lualine/lualine.nvim',
     dependencies = {
       'nvim-tree/nvim-web-devicons',
+      'zbirenbaum/copilot.lua',
     },
+    event = 'VeryLazy',
     config = function()
       local icons = require('config').icons
+
+      local util = require('util')
 
       local function fg(name)
         return function()
@@ -86,6 +90,36 @@ return {
                 modified = icons.git.modified,
                 removed = icons.git.removed,
               },
+            },
+            {
+              function()
+                local icon = require('config').icons.kinds.Copilot
+                local status = require('copilot.api').status.data
+                return icon .. (status.message or '')
+              end,
+              cond = function()
+                if not package.loaded['copilot'] then
+                  return
+                end
+                local ok, clients = pcall(require('util').lsp.get_clients, { name = 'copilot', bufnr = 0 })
+                if not ok then
+                  return false
+                end
+                return ok and #clients > 0
+              end,
+              color = function()
+                local colors = {
+                  [''] = util.ui.fg('Character'),
+                  ['Normal'] = util.ui.fg('Character'),
+                  ['Warning'] = util.ui.fg('DiagnosticError'),
+                  ['InProgress'] = util.ui.fg('DiagnosticWarn'),
+                }
+                if not package.loaded['copilot'] then
+                  return
+                end
+                local status = require('copilot.api').status.data
+                return colors[status.status] or colors['']
+              end,
             },
           },
           lualine_y = {
