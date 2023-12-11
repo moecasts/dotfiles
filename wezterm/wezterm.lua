@@ -9,6 +9,8 @@ return {
   -- color_scheme = "nord",
   color_scheme = "nordfox",
 
+  window_background_opacity = 0.96,
+
   -- keymap
   keys = {
     -- Make Option-Left equivalent to Alt-b which many line editors interpret as backward-word
