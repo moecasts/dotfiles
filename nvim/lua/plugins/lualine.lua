@@ -151,8 +151,8 @@ return {
     end,
     opts = function()
       return {
-        separator = ' ',
-        highlight = true,
+        separator = ' > ',
+        -- highlight = true,
         depth_limit = 5,
         icons = require('config').icons.kinds,
       }

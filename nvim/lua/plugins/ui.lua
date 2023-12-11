@@ -231,7 +231,12 @@ return {
   {
     'xiyaowong/transparent.nvim',
     config = function()
-      require('transparent').setup({})
+      require('transparent').setup({
+        exclude_groups = {
+          'StatusLine',
+          'StatusLineNC',
+        },
+      })
     end,
   },
 
