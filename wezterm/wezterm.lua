@@ -22,4 +22,8 @@ return {
     -- Make Option-}  equivalent to Alt-}; move tab next
     { key = "}", mods = "SHIFT|OPT", action = wezterm.action.MoveTabRelative(1) },
   },
+
+  enable_wayland = false,
+
+  dpi = 96.0,
 }
