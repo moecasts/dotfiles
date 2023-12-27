@@ -217,7 +217,20 @@ return {
 
           -- eslint
           nls.builtins.formatting.eslint_d,
-          nls.builtins.diagnostics.eslint_d,
+          nls.builtins.diagnostics.eslint_d.with({
+            condition = function(utils)
+              return utils.root_has_file({
+                'eslint.config.js',
+                -- https://eslint.org/docs/user-guide/configuring/configuration-files#configuration-file-formats
+                '.eslintrc',
+                '.eslintrc.js',
+                '.eslintrc.cjs',
+                '.eslintrc.yaml',
+                '.eslintrc.yml',
+                '.eslintrc.json',
+              })
+            end,
+          }),
           nls.builtins.code_actions.eslint_d,
 
           -- clang_format
