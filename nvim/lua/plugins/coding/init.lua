@@ -24,7 +24,7 @@ return {
         end,
         expr = true, silent = true, mode = 'i',
       },
-      { '<tab>',   function() require('luasnip').jump(1) end,   mode = 's' },
+      { '<tab>', function() require('luasnip').jump(1) end, mode = 's' },
       { '<s-tab>', function() require('luasnip').jump( -1) end, mode = { 'i', 's' } },
     },
   },
@@ -216,27 +216,24 @@ return {
 
   -- splitjoin
   {
-    'AndrewRadev/splitjoin.vim',
-  },
-  {
-    'bennypowers/splitjoin.nvim',
-    lazy = true,
-    keys = {
-      {
-        'gj',
-        function()
-          require('splitjoin').join()
-        end,
-        desc = 'Join the object under cursor',
-      },
-      {
-        'g,',
-        function()
-          require('splitjoin').split()
-        end,
-        desc = 'Split the object under cursor',
-      },
-    },
+    'Wansmer/treesj',
+    keys = { 'gJ', 'gS' },
+    dependencies = { 'nvim-treesitter/nvim-treesitter' }, -- if you install parsers with `nvim-treesitter`
+    config = function()
+      require('treesj').setup({
+        use_default_keymaps = false,
+      })
+
+      local function map(mode, l, r, desc)
+        vim.keymap.set(mode, l, r, {
+          buffer = buffer,
+          desc = desc,
+        })
+      end
+
+      map('n', 'gJ', require('treesj').join, 'Join the object')
+      map('n', 'gS', require('treesj').split, 'Split the object')
+    end,
   },
 
   -- change text case
