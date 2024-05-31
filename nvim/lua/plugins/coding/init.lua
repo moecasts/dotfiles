@@ -256,4 +256,18 @@ return {
       })
     end,
   },
+
+  -- change ts comment case
+  {
+    'moecasts/nvim-ts-comment-case',
+    -- dir = '~/Developments/self/nvim/nvim-ts-comment-case',
+    build = function(plugin)
+      os.execute(string.format('cd %s && npm i --no-save', plugin.dir))
+    end,
+    config = function(plugin)
+      require('ts_comment_case').setup({
+        plugin_dir = plugin.dir,
+      })
+    end,
+  },
 }
