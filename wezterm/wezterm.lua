@@ -1,6 +1,10 @@
 local wezterm = require("wezterm")
 
-return {
+local function is_wayland()
+  return os.getenv("WAYLAND_DISPLAY") ~= nil
+end
+
+local config = {
   -- font
   font = wezterm.font("FiraCode Nerd Font Mono", { stretch = "Expanded", weight = "Regular" }),
   font_size = 16,
@@ -22,8 +26,11 @@ return {
     -- Make Option-}  equivalent to Alt-}; move tab next
     { key = "}", mods = "SHIFT|OPT", action = wezterm.action.MoveTabRelative(1) },
   },
-
-  enable_wayland = false,
-
-  dpi = 96.0,
 }
+
+if is_wayland() then
+  config.enable_wayland = false
+  config.dpi = 96.0
+end
+
+return config
