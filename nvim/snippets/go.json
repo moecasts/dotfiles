@@ -1,0 +1,14 @@
+{
+  "localizer from context": {
+    "prefix": "lfc",
+    "body": [
+      "localizer := localize.FromContext(ctx)"
+    ],
+    "description": "localizer from context"
+  },
+  "localize must localize": {
+    "prefix": "lml",
+    "body": "localizer.MustLocalize(&i18n.LocalizeConfig{\n\tDefaultMessage: &i18n.Message{\n\t\tID: ${1:id},\n\t\tOther: ${0:message},\n\t},\n})",
+    "description": "localize must localize"
+  }
+}
