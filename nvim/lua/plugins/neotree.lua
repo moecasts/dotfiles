@@ -87,11 +87,52 @@ return {
                 end
               end)
             end,
+
+            find_in_directory_telescope = function(state)
+              local node = state.tree:get_node()
+              local filepath = node:get_id()
+              local modify = vim.fn.fnamemodify
+              local dirpath = modify(filepath, ':.')
+
+              -- check if the dirpath is a directory
+              if vim.fn.isdirectory(dirpath) == 0 then
+                print('Error: ' .. dirpath .. ' is not a directory.')
+                return
+              end
+
+              require('telescope.builtin').live_grep({
+                prompt_title = 'Live Grep',
+                cwd = dirpath,
+              })
+            end,
+
+            find_in_directory_spectre = function(state)
+              local node = state.tree:get_node()
+              local filepath = node:get_id()
+              local modify = vim.fn.fnamemodify
+              local dirpath = modify(filepath, ':.')
+
+              -- check if the dirpath is a directory
+              if vim.fn.isdirectory(dirpath) == 0 then
+                print('Error: ' .. dirpath .. ' is not a directory.')
+                return
+              end
+
+              local path = ('%s/**/*'):format(dirpath)
+
+              require('spectre').open({
+                search_text = '',
+                replace_text = '',
+                path = path,
+              })
+            end,
           },
           window = {
             mappings = {
               ['/'] = 'noop',
               ['Y'] = 'copy_selector',
+              ['F'] = 'find_in_directory_spectre',
+              ['T'] = 'find_in_directory_telescope',
             },
           },
         },
