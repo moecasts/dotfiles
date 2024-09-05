@@ -66,7 +66,7 @@ return {
     opts = {
       defaults = {
         path_display = {
-          'smart',
+          'truncate',
         },
         prompt_prefix = '   ',
         selection_caret = ' ',
