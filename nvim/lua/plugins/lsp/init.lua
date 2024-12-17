@@ -241,6 +241,11 @@ return {
             },
           }),
 
+          -- golang
+          nls.builtins.formatting.gofumpt,
+          nls.builtins.formatting.goimports_reviser,
+          nls.builtins.formatting.golines,
+
           -- typescript
           require('typescript.extensions.null-ls.code-actions'),
         },
@@ -262,6 +267,9 @@ return {
         'codelldb',
         'cspell',
         'clang-format',
+        'gofumpt',
+        'goimports',
+        'goimports-reviser',
       },
     },
     ---@param opts MasonSettings | {ensure_installed: string[]}

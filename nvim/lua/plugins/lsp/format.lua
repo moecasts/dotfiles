@@ -37,7 +37,7 @@ function M.format()
       return client.name ~= 'null-ls'
     end,
   }, {
-    timeout_ms = nil,
+    timeout_ms = 999999,
     formatting_options = nil,
   }))
 end
@@ -45,9 +45,9 @@ end
 function M.on_attach(client, buf)
   -- dont format if client disabled it
   if
-    client.config
-    and client.config.capabilities
-    and client.config.capabilities.documentFormattingProvider == false
+      client.config
+      and client.config.capabilities
+      and client.config.capabilities.documentFormattingProvider == false
   then
     return
   end
