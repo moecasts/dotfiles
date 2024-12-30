@@ -1,5 +1,8 @@
 local Util = require('lazy.core.util')
 
+---@class editor.util: LazyUtilCore
+---@field format editor.util.format
+---@field lsp editor.util.lsp
 local M = {}
 
 ---@type table<string, string|string[]>
@@ -228,6 +231,16 @@ M.dump = function(o)
   end
 end
 
+function M.merge_tables(...)
+  local result = {}
+  for _, t in ipairs({ ... }) do
+    for _, v in pairs(t) do
+      table.insert(result, v)
+    end
+  end
+  return result
+end
+
 -- toggle all treesitter modules, if is buffter use TSBufToggle, else use TSToggle (global)
 function M.toggle_treesitter_modules()
   if vim.fn.exists(':TSToggle') == 0 or vim.fn.exists(':TSBufToggle') == 0 then
@@ -253,6 +266,25 @@ function M.toggle_treesitter_modules()
     else
       vim.cmd((':TSBufToggle %s'):format(module))
     end
+  end
+end
+
+---@param fn fun()
+function M.on_very_lazy(fn)
+  vim.api.nvim_create_autocmd('User', {
+    pattern = 'VeryLazy',
+    callback = function()
+      fn()
+    end,
+  })
+end
+
+--- Override the default title for notifications.
+for _, level in ipairs({ 'info', 'warn', 'error' }) do
+  M[level] = function(msg, opts)
+    opts = opts or {}
+    opts.title = opts.title or 'Editor'
+    return Util[level](msg, opts)
   end
 end
 

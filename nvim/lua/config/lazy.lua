@@ -12,5 +12,41 @@ if not vim.loop.fs_stat(lazypath) then
 end
 vim.opt.rtp:prepend(lazypath)
 
--- plugin
-require('lazy').setup('plugins')
+-- set global utils
+_G.Editor = require('util')
+
+local spec = require('util').merge_tables(
+  require('util.plugin').generate_import_specs('plugins'),
+  {}
+);
+
+-- Setup lazy.nvim
+require('lazy').setup({
+  spec = spec,
+  -- spec =
+  -- {
+  --   {
+  --     import = 'plugins'
+  --   },
+  --   {
+  --     import = 'plugins/coding'
+  --   },
+  --   {
+  --     import = 'plugins/extras/lang'
+  --   },
+  --   {
+  --     import = 'plugins/extras/formatting'
+  --   },
+  --   {
+  --     import = 'plugins/extras/linting'
+  --   },
+  --   {
+  --     import = 'plugins/lsp/init'
+  --   },
+  -- },
+  -- Configure any other settings here. See the documentation for more details.
+  -- colorscheme that will be used when installing plugins.
+  install = { colorscheme = { 'nord' } },
+  -- automatically check for plugin updates
+  checker = { enabled = true },
+})

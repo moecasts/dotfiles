@@ -172,7 +172,8 @@ return {
       end
     end,
     config = function()
-      vim.g.doge_mapping = '<Leader>d'
+      vim.g.doge_enable_mappings = 0
+      vim.g.doge_mapping = '<Leader>cg'
     end,
   },
   {
@@ -271,5 +272,29 @@ return {
         plugin_dir = plugin.dir,
       })
     end,
+  },
+
+  -- search/replace in multiple files
+  {
+    'MagicDuck/grug-far.nvim',
+    opts = { headerMaxWidth = 80 },
+    cmd = 'GrugFar',
+    keys = {
+      {
+        '<leader>sr',
+        function()
+          local grug = require('grug-far')
+          local ext = vim.bo.buftype == '' and vim.fn.expand('%:e')
+          grug.open({
+            transient = true,
+            prefills = {
+              filesFilter = ext and ext ~= '' and '*.' .. ext or nil,
+            },
+          })
+        end,
+        mode = { 'n', 'v' },
+        desc = 'Search and Replace',
+      },
+    },
   },
 }

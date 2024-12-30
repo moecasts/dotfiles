@@ -1,18 +1,29 @@
 return {
   -- colorscheme - nord
+  -- {
+  --   'shaunsingh/nord.nvim',
+  --   lazy = false,
+  --   priority = 1000,
+  --   config = function()
+  --     -- config in lua
+  --     -- https://github.com/shaunsingh/nord.nvim#%EF%B8%8F-configuration
+  --     vim.g.nord_contrast = true
+  --     vim.g.nord_borders = true
+  --     vim.g.nord_uniform_diff_background = true
+
+  --     -- Load the colorscheme
+  --     require('nord').set()
+  --   end,
+  -- },
+
+  -- colorscheme - nord
   {
-    'shaunsingh/nord.nvim',
+    'gbprod/nord.nvim',
     lazy = false,
     priority = 1000,
     config = function()
-      -- config in lua
-      -- https://github.com/shaunsingh/nord.nvim#%EF%B8%8F-configuration
-      vim.g.nord_contrast = true
-      vim.g.nord_borders = true
-      vim.g.nord_uniform_diff_background = true
-
-      -- Load the colorscheme
-      require('nord').set()
+      require('nord').setup({})
+      vim.cmd.colorscheme('nord')
     end,
   },
 

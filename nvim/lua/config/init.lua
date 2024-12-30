@@ -1,9 +1,23 @@
+---@class EditorConfig: EditorOptions
 local M = {}
 
----@class MoeVimConfig
+---@class EditorOptions
 local defaults = {
   -- icons used by other plugins
   icons = {
+    misc = {
+      dots = '󰇘',
+    },
+    ft = {
+      octo = '',
+    },
+    dap = {
+      Stopped = { '󰁕 ', 'DiagnosticWarn', 'DapStoppedLine' },
+      Breakpoint = ' ',
+      BreakpointCondition = ' ',
+      BreakpointRejected = { ' ', 'DiagnosticError' },
+      LogPoint = '.>',
+    },
     diagnostics = {
       Error = ' ',
       Warn = ' ',
@@ -17,45 +31,86 @@ local defaults = {
     },
     kinds = {
       Array = ' ',
-      Boolean = ' ',
+      Boolean = '󰨙 ',
       Class = ' ',
+      Codeium = '󰘦 ',
       Color = ' ',
-      Constant = ' ',
-      Constructor = ' ',
-      Copilot = ' ',
-      Enum = ' ',
-      EnumMember = ' ',
+      Control = ' ',
+      Collapsed = ' ',
+      Constant = '󰏿 ',
+      Constructor = ' ',
+      Copilot = ' ',
+      Enum = ' ',
+      EnumMember = ' ',
       Event = ' ',
-      Field = ' ',
+      Field = ' ',
       File = ' ',
-      Folder = ' ',
-      Function = ' ',
-      Interface = ' ',
+      Folder = ' ',
+      Function = '󰊕 ',
+      Interface = ' ',
       Key = ' ',
       Keyword = ' ',
-      Method = ' ',
-      Module = ' ',
-      Namespace = ' ',
-      Null = 'ﳠ ',
-      Number = ' ',
+      Method = '󰊕 ',
+      Module = ' ',
+      Namespace = '󰦮 ',
+      Null = ' ',
+      Number = '󰎠 ',
       Object = ' ',
       Operator = ' ',
-      Package = ' ',
-      Property = ' ',
+      Package = ' ',
+      Property = ' ',
       Reference = ' ',
-      Snippet = ' ',
-      String = ' ',
-      Struct = ' ',
+      Snippet = '󱄽 ',
+      String = ' ',
+      Struct = '󰆼 ',
+      Supermaven = ' ',
+      TabNine = '󰏚 ',
       Text = ' ',
       TypeParameter = ' ',
       Unit = ' ',
       Value = ' ',
-      Variable = ' ',
+      Variable = '󰀫 ',
+    },
+  },
+  ---@type table<string, string[]|boolean>?
+  kind_filter = {
+    default = {
+      'Class',
+      'Constructor',
+      'Enum',
+      'Field',
+      'Function',
+      'Interface',
+      'Method',
+      'Module',
+      'Namespace',
+      'Package',
+      'Property',
+      'Struct',
+      'Trait',
+    },
+    markdown = false,
+    help = false,
+    -- you can specify a different filter for each filetype
+    lua = {
+      'Class',
+      'Constructor',
+      'Enum',
+      'Field',
+      'Function',
+      'Interface',
+      'Method',
+      'Module',
+      'Namespace',
+      -- "Package", -- remove package since luals uses it for control flow structures
+      'Property',
+      'Struct',
+      'Trait',
     },
   },
 }
 
----@type MoeVimConfig
+---@type EditorOptions
 local options = defaults
 
 M.setup = function()
@@ -63,6 +118,8 @@ M.setup = function()
   require('config.options')
   require('config.lazy')
   require('config.keymaps')
+
+  Editor.format.setup()
 end
 
 setmetatable(M, {
@@ -70,7 +127,7 @@ setmetatable(M, {
     if options == nil then
       return vim.deepcopy(defaults)[key]
     end
-    ---@cast options MoeVimConfig
+    ---@cast options EditorConfig
     return options[key]
   end,
 })

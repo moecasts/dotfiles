@@ -2,7 +2,7 @@ return {
   -- lspconfig
   {
     'neovim/nvim-lspconfig',
-    event = { 'BufReadPre', 'BufNewFile' },
+    event = { 'BufReadPost', 'BufWritePost', 'BufNewFile' },
     dependencies = {
       'mason.nvim',
       'williamboman/mason-lspconfig.nvim',
@@ -12,18 +12,54 @@ return {
     },
     opts = {
       -- options for vim.diagnostic.config()
+      ---@type vim.diagnostic.Opts
       diagnostics = {
         underline = true,
         update_in_insert = false,
         virtual_text = false,
-        -- virtual_text = { spacing = 4, prefix = '●' },
+        -- virtual_text = {
+        --   spacing = 4,
+        --   source = "if_many",
+        --   prefix = "●",
+        --   -- this will set set the prefix to a function that returns the diagnostics icon based on the severity
+        --   -- this only works on a recent 0.10.0 build. Will be set to "●" when not supported
+        --   -- prefix = "icons",
+        -- },
         severity_sort = true,
+        signs = {
+          text = {
+            [vim.diagnostic.severity.ERROR] = require('config').icons.diagnostics.Error,
+            [vim.diagnostic.severity.WARN] = require('config').icons.diagnostics.Warn,
+            [vim.diagnostic.severity.HINT] = require('config').icons.diagnostics.Hint,
+            [vim.diagnostic.severity.INFO] = require('config').icons.diagnostics.Info,
+          },
+        },
       },
-
-      -- Automatically format on save
-      autoformat = true,
-
+      -- Enable this to enable the builtin LSP inlay hints on Neovim >= 0.10.0
+      -- Be aware that you also will need to properly configure your LSP server to
+      -- provide the inlay hints.
+      inlay_hints = {
+        enabled = false,
+        exclude = { 'vue' }, -- filetypes for which you don't want to enable inlay hints
+      },
+      -- Enable this to enable the builtin LSP code lenses on Neovim >= 0.10.0
+      -- Be aware that you also will need to properly configure your LSP server to
+      -- provide the code lenses.
+      codelens = {
+        enabled = false,
+      },
+      -- add any global capabilities here
+      capabilities = {
+        workspace = {
+          fileOperations = {
+            didRename = true,
+            willRename = true,
+          },
+        },
+      },
       -- options for vim.lsp.buf.format
+      -- `bufnr` and `filter` is handled by the Editor formatter,
+      -- but can be also overridden when specified
       format = {
         formatting_options = nil,
         timeout_ms = nil,
@@ -32,26 +68,6 @@ return {
       -- LSP Server Settings
       ---@type lspconfig.options
       servers = {
-        tsserver = {
-          settings = {
-            javascript = {
-              format = {
-                semicolons = 'insert',
-              },
-              preferences = {
-                quoteStyle = 'single',
-              },
-            },
-            typescript = {
-              format = {
-                semicolons = 'insert',
-              },
-              preferences = {
-                quoteStyle = 'single',
-              },
-            },
-          },
-        },
         jsonls = {},
         cssls = {},
         html = {},
@@ -59,97 +75,92 @@ return {
         -- pyright = {},
         bashls = {},
         yamlls = {},
-        rust_analyzer = {},
-        -- codelldb = {},
-        gopls = {},
       },
 
-      setup = {
-        -- example to setup with typescript.nvim
-        tsserver = function(_, opts)
-          require('typescript').setup({ server = opts })
-          return true
-        end,
-        -- Specify * to use this function as a fallback for any server
-        -- ["*"] = function(server, opts) end,
-        rust_analyzer = function(_, opts)
-          require('util').on_attach(function(client, buffer)
-            -- stylua: ignore
-            if client.name == "rust_analyzer" then
-              vim.keymap.set("n", "K", "<CMD>RustHoverActions<CR>", { buffer = buffer })
-              vim.keymap.set("n", "<leader>ct", "<CMD>RustDebuggables<CR>", { buffer = buffer, desc = "Run Test" })
-              vim.keymap.set("n", "<leader>dr", "<CMD>RustDebuggables<CR>", { buffer = buffer, desc = "Run" })
-            end
-          end)
-          local mason_registry = require('mason-registry')
-          -- rust tools configuration for debugging support
-          local codelldb = mason_registry.get_package('codelldb')
-          local extension_path = codelldb:get_install_path() .. '/extension/'
-          local codelldb_path = extension_path .. 'adapter/codelldb'
-          local liblldb_path = vim.fn.has('mac') == 1 and extension_path .. 'lldb/lib/liblldb.dylib'
-            or extension_path .. 'lldb/lib/liblldb.so'
-          local rust_tools_opts = vim.tbl_deep_extend('force', opts, {
-            dap = {
-              adapter = require('rust-tools.dap').get_codelldb_adapter(codelldb_path, liblldb_path),
-            },
-            tools = {
-              hover_actions = {
-                auto_focus = false,
-                border = 'none',
-              },
-              inlay_hints = {
-                auto = false,
-                show_parameter_hints = true,
-              },
-            },
-            server = {
-              settings = {
-                ['rust-analyzer'] = {
-                  cargo = {
-                    features = 'all',
-                  },
-                  -- Add clippy lints for Rust.
-                  checkOnSave = true,
-                  check = {
-                    command = 'clippy',
-                    features = 'all',
-                  },
-                  procMacro = {
-                    enable = true,
-                  },
-                },
-              },
-            },
-          })
-          require('rust-tools').setup(rust_tools_opts)
-          return true
-        end,
-      },
+      setup = {},
     },
     config = function(plugin, opts)
       -- setup autoformat
-      require('plugins.lsp.format').autoformat = opts.autoformat
+      Editor.format.register(Editor.lsp.formatter())
 
       -- setup formatting and keymaps
       require('util').on_attach(function(client, buffer)
-        require('plugins.lsp.format').on_attach(client, buffer)
-        require('plugins.lsp.keymaps').on_attach(client, buffer)
+        require('util.lsp-keymaps').on_attach(client, buffer)
       end)
 
-      -- diagnostics
-      for name, icon in pairs(require('config').icons.diagnostics) do
-        name = 'DiagnosticSign' .. name
-        vim.fn.sign_define(name, { text = icon, texthl = name, numhl = '' })
+      Editor.lsp.setup()
+      Editor.lsp.on_dynamic_capability(require('util.lsp-keymaps').on_attach)
+
+      -- diagnostics signs
+      if vim.fn.has('nvim-0.10.0') == 0 then
+        if type(opts.diagnostics.signs) ~= 'boolean' then
+          for severity, icon in pairs(opts.diagnostics.signs.text) do
+            local name = vim.diagnostic.severity[severity]:lower():gsub('^%l', string.upper)
+            name = 'DiagnosticSign' .. name
+            vim.fn.sign_define(name, { text = icon, texthl = name, numhl = '' })
+          end
+        end
       end
-      vim.diagnostic.config(opts.diagnostics)
+
+      if vim.fn.has('nvim-0.10') == 1 then
+        -- inlay hints
+        if opts.inlay_hints.enabled then
+          Editor.lsp.on_supports_method('textDocument/inlayHint', function(client, buffer)
+            if
+              vim.api.nvim_buf_is_valid(buffer)
+              and vim.bo[buffer].buftype == ''
+              and not vim.tbl_contains(opts.inlay_hints.exclude, vim.bo[buffer].filetype)
+            then
+              vim.lsp.inlay_hint.enable(true, { bufnr = buffer })
+            end
+          end)
+        end
+
+        -- code lens
+        if opts.codelens.enabled and vim.lsp.codelens then
+          Editor.lsp.on_supports_method('textDocument/codeLens', function(client, buffer)
+            vim.lsp.codelens.refresh()
+            vim.api.nvim_create_autocmd({ 'BufEnter', 'CursorHold', 'InsertLeave' }, {
+              buffer = buffer,
+              callback = vim.lsp.codelens.refresh,
+            })
+          end)
+        end
+      end
+
+      if type(opts.diagnostics.virtual_text) == 'table' and opts.diagnostics.virtual_text.prefix == 'icons' then
+        opts.diagnostics.virtual_text.prefix = vim.fn.has('nvim-0.10.0') == 0 and '●'
+          or function(diagnostic)
+            local icons = Editor.config.icons.diagnostics
+            for d, icon in pairs(icons) do
+              if diagnostic.severity == vim.diagnostic.severity[d:upper()] then
+                return icon
+              end
+            end
+          end
+      end
+
+      vim.diagnostic.config(vim.deepcopy(opts.diagnostics))
 
       local servers = opts.servers
-      local capabilities = require('cmp_nvim_lsp').default_capabilities(vim.lsp.protocol.make_client_capabilities())
+      local has_cmp, cmp_nvim_lsp = pcall(require, 'cmp_nvim_lsp')
+      local has_blink, blink = pcall(require, 'blink.cmp')
+      local capabilities = vim.tbl_deep_extend(
+        'force',
+        {},
+        vim.lsp.protocol.make_client_capabilities(),
+        has_cmp and cmp_nvim_lsp.default_capabilities() or {},
+        has_blink and blink.get_lsp_capabilities() or {},
+        opts.capabilities or {}
+      )
 
-      local setup = function(server)
+      local function setup(server)
         local server_opts = vim.tbl_deep_extend('force', {
           capabilities = vim.deepcopy(capabilities),
         }, servers[server] or {})
+        if server_opts.enabled == false then
+          return
+        end
 
         if opts.setup[server] then
           if opts.setup[server](server, server_opts) then
@@ -163,93 +174,49 @@ return {
         require('lspconfig')[server].setup(server_opts)
       end
 
-      local mlsp = require('mason-lspconfig')
-      local available = mlsp.get_available_servers()
+      -- get all the servers that are available through mason-lspconfig
+      local have_mason, mlsp = pcall(require, 'mason-lspconfig')
+      local all_mslp_servers = {}
+      if have_mason then
+        all_mslp_servers = vim.tbl_keys(require('mason-lspconfig.mappings.server').lspconfig_to_package)
+      end
 
       local ensure_installed = {} ---@type string[]
       for server, server_opts in pairs(servers) do
         if server_opts then
           server_opts = server_opts == true and {} or server_opts
-          -- run manual setup if mason=false or if this is a server that cannot be installed with mason-lspconfig
-          if server_opts.mason == false or not vim.tbl_contains(available, server) then
-            setup(server)
-          else
-            ensure_installed[#ensure_installed + 1] = server
+          if server_opts.enabled ~= false then
+            -- run manual setup if mason=false or if this is a server that cannot be installed with mason-lspconfig
+            if server_opts.mason == false or not vim.tbl_contains(all_mslp_servers, server) then
+              setup(server)
+            else
+              ensure_installed[#ensure_installed + 1] = server
+            end
           end
         end
       end
 
-      require('mason-lspconfig').setup({
-        ensure_installed = ensure_installed,
-        automatic_installation = true,
-      })
-      require('mason-lspconfig').setup_handlers({ setup })
-    end,
-  },
+      if have_mason then
+        mlsp.setup({
+          ensure_installed = vim.tbl_deep_extend(
+            'force',
+            ensure_installed,
+            Editor.opts('mason-lspconfig.nvim').ensure_installed or {}
+          ),
+          handlers = { setup },
+        })
+      end
 
-  -- formatters
-  {
-    'nvimtools/none-ls.nvim',
-    event = { 'BufReadPre', 'BufNewFile' },
-    dependencies = { 'mason.nvim' },
-    opts = function()
-      local nls = require('null-ls')
-
-      nls.setup({
-        -- you can reuse a shared lspconfig on_attach callback here
-        on_attach = require('plugins.lsp.format').on_attach,
-
-        sources = {
-          -- code spell
-          nls.builtins.diagnostics.cspell.with({
-            diagnostics_postprocess = function(diagnostic)
-              diagnostic.severity = vim.diagnostic.severity.HINT
-            end,
-          }),
-          nls.builtins.code_actions.cspell,
-
-          nls.builtins.formatting.stylua,
-          -- nls.builtins.diagnostics.eslint,
-          -- nls.builtins.completion.spell,
-
-          nls.builtins.formatting.prettier,
-          -- nls.builtins.completion.luasnip,
-
-          -- eslint
-          nls.builtins.formatting.eslint_d,
-          nls.builtins.diagnostics.eslint_d.with({
-            condition = function(utils)
-              return utils.root_has_file({
-                'eslint.config.js',
-                -- https://eslint.org/docs/user-guide/configuring/configuration-files#configuration-file-formats
-                '.eslintrc',
-                '.eslintrc.js',
-                '.eslintrc.cjs',
-                '.eslintrc.yaml',
-                '.eslintrc.yml',
-                '.eslintrc.json',
-              })
-            end,
-          }),
-          nls.builtins.code_actions.eslint_d,
-
-          -- clang_format
-          nls.builtins.formatting.clang_format.with({
-            extra_args = {
-              '--style',
-              '{ BasedOnStyle: google, AlignConsecutiveAssignments: true, AlignConsecutiveDeclarations: true }',
-            },
-          }),
-
-          -- golang
-          nls.builtins.formatting.gofumpt,
-          nls.builtins.formatting.goimports_reviser,
-          nls.builtins.formatting.golines,
-
-          -- typescript
-          require('typescript.extensions.null-ls.code-actions'),
-        },
-      })
+      if Editor.lsp.is_enabled('denols') and Editor.lsp.is_enabled('vtsls') then
+        local is_deno = require('lspconfig.util').root_pattern('deno.json', 'deno.jsonc')
+        Editor.lsp.disable('vtsls', is_deno)
+        Editor.lsp.disable('denols', function(root_dir, config)
+          if not is_deno(root_dir) then
+            config.settings.deno.enable = false
+          end
+          return false
+        end)
+      end
     end,
   },
 
@@ -258,6 +225,7 @@ return {
     'williamboman/mason.nvim',
     cmd = 'Mason',
     keys = { { '<leader>cm', '<cmd>Mason<cr>', desc = 'Mason' } },
+    opts_extend = { 'ensure_installed' },
     opts = {
       ensure_installed = {
         'stylua',
@@ -270,6 +238,7 @@ return {
         'gofumpt',
         'goimports',
         'goimports-reviser',
+        'eslint_d',
       },
     },
     ---@param opts MasonSettings | {ensure_installed: string[]}

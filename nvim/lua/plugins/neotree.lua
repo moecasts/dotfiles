@@ -3,7 +3,6 @@ return {
     'nvim-neo-tree/neo-tree.nvim',
     lazy = false,
     cmd = 'Neotree',
-    branch = 'v2.x',
     keys = {
       { '<leader>n', '<cmd>Neotree toggle<cr>', desc = 'NeoTree' },
     },
@@ -37,7 +36,9 @@ return {
           width = 30,
         },
         filesystem = {
-          follow_current_file = true,
+          follow_current_file = {
+            enabled = true,
+          },
           hijack_netrw_behavior = 'open_current',
           filtered_items = {
             visible = true,
@@ -126,12 +127,43 @@ return {
                 path = path,
               })
             end,
+
+            find_in_directory_grug_far = function(state)
+              local node = state.tree:get_node()
+              local filepath = node:get_id()
+              local modify = vim.fn.fnamemodify
+              local dirpath = modify(filepath, ':.')
+
+              -- check if the dirpath is a directory
+              if vim.fn.isdirectory(dirpath) == 0 then
+                print('Error: ' .. dirpath .. ' is not a directory.')
+                return
+              end
+
+              local prefills = {
+                paths = dirpath,
+              }
+
+              local grug_far = require('grug-far')
+              -- instance check
+              if not grug_far.has_instance('explorer') then
+                grug_far.open({
+                  instanceName = 'explorer',
+                  prefills = prefills,
+                  staticTitle = 'Find and Replace from Explorer',
+                })
+              else
+                grug_far.open_instance('explorer')
+                -- updating the prefills without clearing the search and other fields
+                grug_far.update_instance_prefills('explorer', prefills, false)
+              end
+            end,
           },
           window = {
             mappings = {
               ['/'] = 'noop',
               ['Y'] = 'copy_selector',
-              ['F'] = 'find_in_directory_spectre',
+              ['F'] = 'find_in_directory_grug_far',
               ['T'] = 'find_in_directory_telescope',
             },
           },
