@@ -1,7 +1,7 @@
 return {
   -- colorscheme - nord
   -- {
-  --   'shaunsingh/nord.nvim',
+  --   'ten3roberts/nord.nvim',
   --   lazy = false,
   --   priority = 1000,
   --   config = function()
@@ -16,16 +16,67 @@ return {
   --   end,
   -- },
 
-  -- colorscheme - nord
   {
-    'gbprod/nord.nvim',
+    'rmehri01/onenord.nvim',
     lazy = false,
     priority = 1000,
     config = function()
-      require('nord').setup({})
-      vim.cmd.colorscheme('nord')
+      local colors = require('onenord.colors').load()
+
+      require('onenord').setup({
+        custom_highlights = {
+          NeoTreeIndentMarker = { fg = colors.selection },
+        },
+      })
     end,
   },
+  -- {
+  --   "fcancelinha/nordern.nvim",
+  --   branch = "master",
+  --   priority = 1000,
+  --   config = function()
+  --     vim.cmd.colorscheme('nordern')
+  --   end,
+  -- },
+
+  -- colorscheme - nord
+  -- {
+  --   'gbprod/nord.nvim',
+  --   lazy = false,
+  --   priority = 1000,
+  --   config = function()
+  --     require('nord').setup({})
+  --     vim.cmd.colorscheme('nord')
+  --   end,
+  -- },
+
+  -- colorscheme - catppuccin
+  -- {
+  --   "catppuccin/nvim",
+  --   name = "catppuccin",
+  --   priority = 1000,
+  --   config = function()
+  --     require("catppuccin").setup({
+  --       flavour = "latte", -- latte, frappe, macchiato, mocha
+  --       background = {     -- :h background
+  --         light = "latte",
+  --         dark = "frappe",
+  --       },
+  --     })
+
+  --     vim.cmd.colorscheme("catppuccin")
+  --   end,
+  -- },
+
+  -- colorscheme - dracula
+  -- {
+  --   "Mofiqul/dracula.nvim",
+  --   name = "dracula",
+  --   priority = 1000,
+  --   config = function()
+  --     vim.cmd.colorscheme("dracula")
+  --   end,
+  -- },
 
   -- colorscheme - nightfox
   -- {
@@ -73,15 +124,15 @@ return {
           header = vim.split(logo, '\n'),
           -- stylua: ignore
           center = {
-            { action = "Telescope find_files",                                     desc = " Find file",       icon = " ", key = "f" },
-            { action = "ene | startinsert",                                        desc = " New file",        icon = " ", key = "n" },
-            { action = "Telescope oldfiles",                                       desc = " Recent files",    icon = " ", key = "r" },
-            { action = "Telescope live_grep",                                      desc = " Find text",       icon = " ", key = "g" },
-            { action = [[lua require("lazyvim.util").telescope.config_files()()]], desc = " Config",          icon = " ", key = "c" },
-            { action = 'lua require("persistence").load()',                        desc = " Restore Session", icon = " ", key = "s" },
-            { action = "LazyExtras",                                               desc = " Lazy Extras",     icon = " ", key = "x" },
-            { action = "Lazy",                                                     desc = " Lazy",            icon = "󰒲 ", key = "l" },
-            { action = "qa",                                                       desc = " Quit",            icon = " ", key = "q" },
+            { action = "Telescope find_files", desc = " Find file", icon = " ", key = "f" },
+            { action = "ene | startinsert", desc = " New file", icon = " ", key = "n" },
+            { action = "Telescope oldfiles", desc = " Recent files", icon = " ", key = "r" },
+            { action = "Telescope live_grep", desc = " Find text", icon = " ", key = "g" },
+            { action = [[lua require("lazyvim.util").telescope.config_files()()]], desc = " Config", icon = " ", key = "c" },
+            { action = 'lua require("persistence").load()', desc = " Restore Session", icon = " ", key = "s" },
+            { action = "LazyExtras", desc = " Lazy Extras", icon = " ", key = "x" },
+            { action = "Lazy", desc = " Lazy", icon = "󰒲 ", key = "l" },
+            { action = "qa", desc = " Quit", icon = " ", key = "q" },
           },
           footer = function()
             local stats = require('lazy').stats()
