@@ -27,7 +27,7 @@ function M.formatexpr()
   if Editor.has('conform.nvim') then
     return require('conform').formatexpr()
   end
-  return vim.lsp.formatexpr({ timeout_ms = 3000 })
+  return vim.lsp.formatexpr({ timeout_ms = 30000 })
 end
 
 ---@param buf? number
