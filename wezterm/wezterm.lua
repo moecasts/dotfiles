@@ -6,7 +6,17 @@ end
 
 local config = {
   -- font
-  font = wezterm.font("FiraCode Nerd Font Mono", { stretch = "Expanded", weight = "Regular" }),
+  -- font = wezterm.font("FiraCode Nerd Font Mono", { stretch = "Expanded", weight = "Regular" }),
+  -- font = wezterm.font("OperatorMono Nerd font", { stretch = "Expanded", weight = "Book" }),
+  font = wezterm.font_with_fallback({
+    {
+      family = "Operator Mono Lig",
+    },
+    {
+      family = "FiraCode Nerd Font Mono",
+      weight = "Regular",
+    },
+  }),
   font_size = 16,
 
   -- apperance
