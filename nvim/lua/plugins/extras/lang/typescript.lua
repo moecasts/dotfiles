@@ -49,6 +49,17 @@ return {
                 propertyDeclarationTypes = { enabled = true },
                 variableTypes = { enabled = false },
               },
+              preferences = {
+                importModuleSpecifierPreference = 'relative',
+                -- 启用 removeUnusedImports 功能
+                organizeImports = true,
+                removeUnusedImports = true,
+              },
+
+              importModuleSpecifierPreference = 'relative',
+              -- 启用 removeUnusedImports 功能
+              organizeImports = true,
+              removeUnusedImports = true,
             },
           },
           keys = {
