@@ -1,36 +1,4 @@
 return {
-  -- snippets
-  {
-    'L3MON4D3/LuaSnip',
-    dependencies = {
-      'rafamadriz/friendly-snippets',
-      config = function()
-        require('luasnip.loaders.from_vscode').lazy_load()
-        require('luasnip.loaders.from_vscode').lazy_load({ paths = { vim.fn.stdpath('config') .. '/snippets' } })
-        require('luasnip').filetype_extend('typescript', { 'javascript' })
-        require('luasnip').filetype_extend('typescriptreact', { 'javascriptreact' })
-      end,
-    },
-    opts = {
-      history = true,
-      delete_check_events = 'TextChanged',
-    },
-    -- stylua: ignore
-    keys = {
-      {
-        '<tab>',
-        function()
-          return require('luasnip').jumpable(1) and '<Plug>luasnip-jump-next' or '<tab>'
-        end,
-        expr = true,
-        silent = true,
-        mode = 'i',
-      },
-      { '<tab>',   function() require('luasnip').jump(1) end,   mode = 's' },
-      { '<s-tab>', function() require('luasnip').jump(-1) end,  mode = { 'i', 's' } },
-    },
-  },
-
   -- auto complete
   {
     'saghen/blink.cmp',
@@ -134,7 +102,15 @@ return {
       -- Default list of enabled providers defined so that you can extend it
       -- elsewhere in your config, without redefining it, due to `opts_extend`
       sources = {
-        default = { 'copilot', 'lsp', 'path', 'snippets', 'buffer' },
+        default = {
+          'copilot',
+          'lsp',
+          'path',
+          -- load any snippets found at ~/.config/nvim/snippets
+          -- FYI: https://cmp.saghen.dev/configuration/snippets#custom-snippets
+          'snippets',
+          'buffer',
+        },
 
         providers = {
           copilot = {

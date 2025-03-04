@@ -1,21 +1,5 @@
 return {
-  -- colorscheme - nord
-  -- {
-  --   'ten3roberts/nord.nvim',
-  --   lazy = false,
-  --   priority = 1000,
-  --   config = function()
-  --     -- config in lua
-  --     -- https://github.com/shaunsingh/nord.nvim#%EF%B8%8F-configuration
-  --     vim.g.nord_contrast = true
-  --     vim.g.nord_borders = true
-  --     vim.g.nord_uniform_diff_background = true
-
-  --     -- Load the colorscheme
-  --     require('nord').set()
-  --   end,
-  -- },
-
+  -- colorscheme - onenord
   {
     'rmehri01/onenord.nvim',
     lazy = false,
@@ -30,63 +14,6 @@ return {
       })
     end,
   },
-  -- {
-  --   "fcancelinha/nordern.nvim",
-  --   branch = "master",
-  --   priority = 1000,
-  --   config = function()
-  --     vim.cmd.colorscheme('nordern')
-  --   end,
-  -- },
-
-  -- colorscheme - nord
-  -- {
-  --   'gbprod/nord.nvim',
-  --   lazy = false,
-  --   priority = 1000,
-  --   config = function()
-  --     require('nord').setup({})
-  --     vim.cmd.colorscheme('nord')
-  --   end,
-  -- },
-
-  -- colorscheme - catppuccin
-  -- {
-  --   "catppuccin/nvim",
-  --   name = "catppuccin",
-  --   priority = 1000,
-  --   config = function()
-  --     require("catppuccin").setup({
-  --       flavour = "latte", -- latte, frappe, macchiato, mocha
-  --       background = {     -- :h background
-  --         light = "latte",
-  --         dark = "frappe",
-  --       },
-  --     })
-
-  --     vim.cmd.colorscheme("catppuccin")
-  --   end,
-  -- },
-
-  -- colorscheme - dracula
-  -- {
-  --   "Mofiqul/dracula.nvim",
-  --   name = "dracula",
-  --   priority = 1000,
-  --   config = function()
-  --     vim.cmd.colorscheme("dracula")
-  --   end,
-  -- },
-
-  -- colorscheme - nightfox
-  -- {
-  --   'EdenEast/nightfox.nvim',
-  --   lazy = false,
-  --   priority = 1000,
-  --   config = function()
-  --     vim.cmd('colorscheme nordfox')
-  --   end,
-  -- },
 
   -- dashboard
   {
@@ -207,90 +134,6 @@ return {
     end,
   },
 
-  -- noicer ui
-  {
-    'folke/noice.nvim',
-    event = 'VeryLazy',
-    opts = {
-      lsp = {
-        override = {
-          ['vim.lsp.util.convert_input_to_markdown_lines'] = true,
-          ['vim.lsp.util.stylize_markdown'] = true,
-        },
-        progress = {
-          enabled = false,
-        },
-        message = {
-          enabled = false,
-        },
-      },
-      presets = {
-        bottom_search = true,
-        command_palette = true,
-        long_message_to_split = true,
-        lsp_doc_border = true,
-      },
-      messages = {
-        enabled = false,
-      },
-    },
-    keys = {
-      {
-        '<S-Enter>',
-        function()
-          require('noice').redirect(vim.fn.getcmdline())
-        end,
-        mode = 'c',
-        desc = 'Redirect Cmdline',
-      },
-      {
-        '<leader>snl',
-        function()
-          require('noice').cmd('last')
-        end,
-        desc = 'Noice Last Message',
-      },
-      {
-        '<leader>snh',
-        function()
-          require('noice').cmd('history')
-        end,
-        desc = 'Noice History',
-      },
-      {
-        '<leader>sna',
-        function()
-          require('noice').cmd('all')
-        end,
-        desc = 'Noice All',
-      },
-      {
-        '<c-f>',
-        function()
-          if not require('noice.lsp').scroll(4) then
-            return '<c-f>'
-          end
-        end,
-        silent = true,
-        expr = true,
-        desc = 'Scroll forward',
-        mode = { 'i', 'n', 's' },
-      },
-      {
-        '<c-b>',
-        function()
-          if not require('noice.lsp').scroll(-4) then
-            return '<c-b>'
-          end
-        end,
-        silent = true,
-        expr = true,
-        desc = 'Scroll backward',
-        mode = { 'i', 'n', 's' },
-      },
-    },
-  },
-
   -- transparent background
   {
     'xiyaowong/transparent.nvim',
@@ -311,4 +154,78 @@ return {
       require('colorizer').setup()
     end,
   },
+
+  -- colorscheme - nord
+  -- {
+  --   'ten3roberts/nord.nvim',
+  --   lazy = false,
+  --   priority = 1000,
+  --   config = function()
+  --     -- config in lua
+  --     -- https://github.com/shaunsingh/nord.nvim#%EF%B8%8F-configuration
+  --     vim.g.nord_contrast = true
+  --     vim.g.nord_borders = true
+  --     vim.g.nord_uniform_diff_background = true
+
+  --     -- Load the colorscheme
+  --     require('nord').set()
+  --   end,
+  -- },
+  -- {
+  --   "fcancelinha/nordern.nvim",
+  --   branch = "master",
+  --   priority = 1000,
+  --   config = function()
+  --     vim.cmd.colorscheme('nordern')
+  --   end,
+  -- },
+
+  -- colorscheme - nord
+  -- {
+  --   'gbprod/nord.nvim',
+  --   lazy = false,
+  --   priority = 1000,
+  --   config = function()
+  --     require('nord').setup({})
+  --     vim.cmd.colorscheme('nord')
+  --   end,
+  -- },
+
+  -- colorscheme - catppuccin
+  -- {
+  --   "catppuccin/nvim",
+  --   name = "catppuccin",
+  --   priority = 1000,
+  --   config = function()
+  --     require("catppuccin").setup({
+  --       flavour = "latte", -- latte, frappe, macchiato, mocha
+  --       background = {     -- :h background
+  --         light = "latte",
+  --         dark = "frappe",
+  --       },
+  --     })
+
+  --     vim.cmd.colorscheme("catppuccin")
+  --   end,
+  -- },
+
+  -- colorscheme - dracula
+  -- {
+  --   "Mofiqul/dracula.nvim",
+  --   name = "dracula",
+  --   priority = 1000,
+  --   config = function()
+  --     vim.cmd.colorscheme("dracula")
+  --   end,
+  -- },
+
+  -- colorscheme - nightfox
+  -- {
+  --   'EdenEast/nightfox.nvim',
+  --   lazy = false,
+  --   priority = 1000,
+  --   config = function()
+  --     vim.cmd('colorscheme nordfox')
+  --   end,
+  -- },
 }
