@@ -6,7 +6,6 @@ return {
     dependencies = {
       'mason.nvim',
       'williamboman/mason-lspconfig.nvim',
-      'hrsh7th/cmp-nvim-lsp',
       'simrat39/rust-tools.nvim',
       'jose-elias-alvarez/typescript.nvim',
     },

@@ -31,103 +31,144 @@ return {
     },
   },
 
-  -- auto completion
+  -- auto complete
   {
-    'hrsh7th/nvim-cmp',
-    version = false, -- last release is way too old
-    event = 'InsertEnter',
+    'saghen/blink.cmp',
     dependencies = {
-      'hrsh7th/cmp-nvim-lsp',
-      'hrsh7th/cmp-buffer',
-      'hrsh7th/cmp-path',
-      'saadparwaiz1/cmp_luasnip',
-      -- lspkind
+      'rafamadriz/friendly-snippets',
+      'fang2hou/blink-copilot',
       'onsails/lspkind-nvim',
+      'nvim-web-devicons',
+    },
 
-      -- copilot
-      {
-        'zbirenbaum/copilot-cmp',
-        dependencies = 'copilot.lua',
-        opts = {},
-        config = function(_, opts)
-          local copilot_cmp = require('copilot_cmp')
-          copilot_cmp.setup(opts)
-          -- attach cmp source whenever copilot attaches
-          -- fixes lazy-loading issues with the copilot cmp source
-          require('util').lsp.on_attach(function(client)
-            if client.name == 'copilot' then
-              copilot_cmp._on_insert_enter({})
-            end
-          end)
-        end,
+    -- use a release tag to download pre-built binaries
+    version = '*',
+    -- AND/OR build from source, requires nightly: https://rust-lang.github.io/rustup/concepts/channels.html#working-with-nightly-rust
+    -- build = 'cargo build --release',
+    -- If you use nix, you can build from source using latest nightly rust with:
+    -- build = 'nix run .#build-plugin',
+
+    ---@module 'blink.cmp'
+    ---@type blink.cmp.Config
+    opts = {
+      completion = {
+        menu = {
+          draw = {
+            gap = 2,
+            components = {
+              kind_icon = {
+                ellipsis = false,
+                text = function(ctx)
+                  local lspkind = require('lspkind')
+                  lspkind.init({
+                    symbol_map = {
+                      Copilot = '',
+                    },
+                  })
+
+                  local icon = ctx.kind_icon
+                  if vim.tbl_contains({ 'Path' }, ctx.source_name) then
+                    local dev_icon, _ = require('nvim-web-devicons').get_icon(ctx.label)
+                    if dev_icon then
+                      icon = dev_icon
+                    end
+                  else
+                    icon = lspkind.symbolic(ctx.kind, {
+                      mode = 'symbol',
+                    })
+                  end
+
+                  return icon .. ctx.icon_gap
+                end,
+
+                -- Optionally, use the highlight groups from nvim-web-devicons
+                -- You can also add the same function for `kind.highlight` if you want to
+                -- keep the highlight groups in sync with the icons.
+                highlight = function(ctx)
+                  local hl = ctx.kind_hl
+                  if vim.tbl_contains({ 'Path' }, ctx.source_name) then
+                    local dev_icon, dev_hl = require('nvim-web-devicons').get_icon(ctx.label)
+                    if dev_icon then
+                      hl = dev_hl
+                    end
+                  end
+                  return hl
+                end,
+              },
+            },
+
+            -- columns = { { 'kind_icon' }, { 'label', 'label_description', gap = 1 } },
+            -- nvim-cmp style menu
+            columns = {
+              { 'label', 'label_description', gap = 1 },
+              { 'kind_icon', 'kind', gap = 1 },
+            },
+          },
+        },
+      },
+
+      -- 'default' (recommended) for mappings similar to built-in completions (C-y to accept, C-n/C-p for up/down)
+      -- 'super-tab' for mappings similar to vscode (tab to accept, arrow keys for up/down)
+      -- 'enter' for mappings similar to 'super-tab' but with 'enter' to accept
+      --
+      -- All presets have the following mappings:
+      -- C-space: Open menu or open docs if already open
+      -- C-e: Hide menu
+      -- C-k: Toggle signature help
+      --
+      -- See the full "keymap" documentation for information on defining your own keymap.
+      keymap = {
+        preset = 'enter',
+      },
+
+      appearance = {
+        -- Sets the fallback highlight groups to nvim-cmp's highlight groups
+        -- Useful for when your theme doesn't support blink.cmp
+        -- Will be removed in a future release
+        use_nvim_cmp_as_default = true,
+        -- Set to 'mono' for 'Nerd Font Mono' or 'normal' for 'Nerd Font'
+        -- Adjusts spacing to ensure icons are aligned
+        nerd_font_variant = 'mono',
+      },
+
+      -- Default list of enabled providers defined so that you can extend it
+      -- elsewhere in your config, without redefining it, due to `opts_extend`
+      sources = {
+        default = { 'copilot', 'lsp', 'path', 'snippets', 'buffer' },
+
+        providers = {
+          copilot = {
+            name = 'copilot',
+            module = 'blink-copilot',
+            score_offset = 100,
+            async = true,
+          },
+        },
+      },
+
+      -- Blink.cmp uses a Rust fuzzy matcher by default for typo resistance and significantly better performance
+      -- You may use a lua implementation instead by using `implementation = "lua"` or fallback to the lua implementation,
+      -- when the Rust fuzzy matcher is not available, by using `implementation = "prefer_rust"`
+      --
+      -- See the fuzzy documentation for more information
+      fuzzy = { implementation = 'prefer_rust_with_warning' },
+    },
+    opts_extend = { 'sources.default' },
+  },
+
+  -- copilot
+  {
+    'zbirenbaum/copilot.lua',
+    cmd = 'Copilot',
+    event = 'InsertEnter',
+    opts = {
+      suggestion = { enabled = false },
+      panel = { enabled = false },
+      filetypes = {
+        markdown = true,
+        help = true,
       },
     },
-    opts = function()
-      local cmp = require('cmp')
-      local lspkind = require('lspkind')
-
-      lspkind.init({
-        symbol_map = {
-          Copilot = '',
-        },
-      })
-
-      vim.api.nvim_set_hl(0, 'CmpItemKindCopilot', require('util').ui.fg('Character'))
-
-      return {
-        completion = {
-          completeopt = 'menu,menuone,noinsert',
-        },
-        snippet = {
-          expand = function(args)
-            require('luasnip').lsp_expand(args.body)
-          end,
-        },
-        mapping = cmp.mapping.preset.insert({
-          ['<C-n>'] = cmp.mapping.select_next_item({ behavior = cmp.SelectBehavior.Insert }),
-          ['<C-p>'] = cmp.mapping.select_prev_item({ behavior = cmp.SelectBehavior.Insert }),
-          ['<C-b>'] = cmp.mapping.scroll_docs(-4),
-          ['<C-f>'] = cmp.mapping.scroll_docs(4),
-          ['<C-Space>'] = cmp.mapping.complete(),
-          ['<C-e>'] = cmp.mapping.abort(),
-          ['<CR>'] = cmp.mapping.confirm({ select = true }), -- Accept currently selected item. Set `select` to `false` to only confirm explicitly selected items.
-        }),
-        sources = cmp.config.sources({
-          {
-            name = 'copilot',
-            group_index = 1,
-            priority = 100,
-          },
-          { name = 'nvim_lsp' },
-          { name = 'luasnip' },
-          { name = 'buffer' },
-          { name = 'path' },
-        }),
-        formatting = {
-          fields = { 'menu', 'abbr', 'kind' },
-          format = lspkind.cmp_format({
-            with_text = true,
-            maxwidth = 50,
-            menu = {
-              nvim_lsp = 'Lsp',
-              luasnip = 'Snip',
-              buffer = 'Buf',
-              path = 'Path',
-            },
-            before = function(entry, vim_item)
-              vim_item.menu = '[' .. string.upper(entry.source.name) .. ']'
-              return vim_item
-            end,
-          }),
-        },
-        experimental = {
-          ghost_text = false,
-          -- ghost_text = {
-          --   hl_group = 'LspCodeLens',
-          -- },
-        },
-      }
-    end,
   },
 
   -- auto pairs
@@ -150,6 +191,7 @@ return {
 
   -- comments
   { 'JoosepAlviste/nvim-ts-context-commentstring', lazy = true },
+
   {
     'echasnovski/mini.comment',
     event = 'VeryLazy',
@@ -195,26 +237,6 @@ return {
   -- better cursors
   {
     'mg979/vim-visual-multi',
-  },
-
-  -- copilot
-  -- {
-  --   'github/copilot.vim',
-  --   keys = {
-  --     { '<leader>cg', '<cmd>Copilot<cr>', desc = 'Copilot' },
-  --   },
-  -- },
-  {
-    'zbirenbaum/copilot.lua',
-    cmd = 'Copilot',
-    event = 'InsertEnter',
-    config = function()
-      require('copilot').setup({
-        suggestion = {
-          auto_trigger = true,
-        },
-      })
-    end,
   },
 
   -- Cursor like ai plugin
