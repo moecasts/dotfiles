@@ -53,6 +53,8 @@ return {
         map('n', '<leader>ghp', gs.preview_hunk, 'Preview Hunk')
         -- stylua: ignore
         map('n', '<leader>ghb', function() gs.blame_line({ full = true }) end, 'Blame Line')
+        -- stylua: ignore
+        map('n', '<leader>ghB', function() gs.blame() end, 'Blame All Lines')
         map('n', '<leader>ghd', gs.diffthis, 'Diff This')
         -- stylua: ignore
         map('n', '<leader>ghD', function() gs.diffthis('~') end, 'Diff This ~')
