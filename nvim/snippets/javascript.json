@@ -6,10 +6,22 @@
     ],
     "description": "a delimiter comment"
   },
+  "tryfinally": {
+    "prefix": "tryf",
+    "body": ["try {", "  $0", "} finally {", "}"]
+  },
   "third party hidden": {
     "prefix": "tph",
     "body": [
       "<ThirdPartyComponent id=\"SelfhostDefaultHidden\">",
+      "</ThirdPartyComponent>"
+    ],
+    "description": "ThirdPartyComponent"
+  },
+  "third party featureKey": {
+    "prefix": "tpf",
+    "body": [
+      "<ThirdPartyComponent featureKey=\"$0\">",
       "</ThirdPartyComponent>"
     ],
     "description": "ThirdPartyComponent"
