@@ -121,6 +121,7 @@ return {
                 return colors[status.status] or colors['']
               end,
             },
+            Snacks.profiler.status(),
           },
           lualine_y = {
             { 'progress', separator = ' ', padding = { left = 1, right = 0 } },
