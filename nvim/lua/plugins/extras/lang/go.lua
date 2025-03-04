@@ -9,6 +9,7 @@ return {
     opts = {
       servers = {
         gopls = {
+          version = 'v0.17.1',
           settings = {
             gopls = {
               gofumpt = true,
@@ -72,7 +73,7 @@ return {
   -- Ensure Go tools are installed
   {
     'williamboman/mason.nvim',
-    opts = { ensure_installed = { 'goimports', 'gofumpt' } },
+    opts = { ensure_installed = { 'gofumpt', 'goimports', 'goimports-reviser' } },
   },
 
   -- formatter
@@ -81,7 +82,7 @@ return {
     optional = true,
     opts = {
       formatters_by_ft = {
-        go = { 'goimports', 'gofumpt' },
+        go = { 'gofumpt', 'goimports', 'goimports-reviser' },
       },
     },
   },
@@ -139,4 +140,3 @@ return {
     },
   },
 }
-

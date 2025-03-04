@@ -6,8 +6,6 @@ return {
     dependencies = {
       'mason.nvim',
       'williamboman/mason-lspconfig.nvim',
-      'simrat39/rust-tools.nvim',
-      'jose-elias-alvarez/typescript.nvim',
     },
     opts = {
       -- options for vim.diagnostic.config()
@@ -189,7 +187,11 @@ return {
             if server_opts.mason == false or not vim.tbl_contains(all_mslp_servers, server) then
               setup(server)
             else
-              ensure_installed[#ensure_installed + 1] = server
+              local server_identifier = server
+              if server_opts.version then
+                server_identifier = server .. '@' .. server_opts.version
+              end
+              ensure_installed[#ensure_installed + 1] = server_identifier
             end
           end
         end
@@ -231,13 +233,8 @@ return {
         'shellcheck',
         'shfmt',
         'flake8',
-        'codelldb',
         'cspell',
         'clang-format',
-        'gofumpt',
-        'goimports',
-        'goimports-reviser',
-        'eslint_d',
       },
     },
     ---@param opts MasonSettings | {ensure_installed: string[]}
