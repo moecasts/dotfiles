@@ -60,6 +60,8 @@ return {
               -- 启用 removeUnusedImports 功能
               organizeImports = true,
               removeUnusedImports = true,
+
+              maxTsServerMemory = 8192,
             },
           },
           keys = {
