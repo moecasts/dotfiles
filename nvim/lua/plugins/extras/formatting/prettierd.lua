@@ -32,6 +32,11 @@ return {
         opts.formatters_by_ft[ft] = opts.formatters_by_ft[ft] or {}
         table.insert(opts.formatters_by_ft[ft], 'prettierd')
       end
+
+      opts.formatters = opts.formatters or {}
+      opts.formatters.prettierd = {
+        require_cwd = true,
+      }
     end,
   },
 }
