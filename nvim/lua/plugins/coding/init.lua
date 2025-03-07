@@ -139,7 +139,7 @@ return {
     cmd = 'Copilot',
     event = 'InsertEnter',
     opts = {
-      suggestion = { enabled = false },
+      suggestion = { enabled = true },
       panel = { enabled = false },
       filetypes = {
         markdown = true,
@@ -220,7 +220,6 @@ return {
   {
     'yetone/avante.nvim',
     event = 'VeryLazy',
-    lazy = false,
     version = false, -- set this if you want to always pull the latest change
     opts = {
       provider = 'openai',
@@ -228,7 +227,7 @@ return {
       openai = {
         -- endpoint = 'https://api.deepseek.com/v1',
         endpoint = 'https://api.lkeap.cloud.tencent.com/v1',
-        model = 'deepseek-v3',
+        model = 'deepseek-r1',
         -- model = 'deepseek-chat',
         -- model = 'deepseek-reasoner',
         timeout = 30000, -- Timeout in milliseconds
@@ -239,25 +238,7 @@ return {
         disable_tools = true,
       },
       file_selector = {
-        provider = 'telescope',
-        provider_opts = {
-          provider_opts = {
-            find_command = { 'rg', '--files', '--hidden', '-g', '!.git' },
-          },
-          -- file_ignore_patterns = {
-          --   '^.git/',
-          --   '^node_modules/',
-          --   '^.DS_Store$',
-          --   '^.idea/',
-          --   '^.vscode/',
-          --   '^build/',
-          --   '^dist/',
-          --   '^out/',
-          --   '^target/',
-          --   '^tmp/',
-          --   '^vendor/',
-          -- },
-        },
+        provider = 'snacks',
       },
     },
     -- if you want to build from source then do `make BUILD_FROM_SOURCE=true`
@@ -420,7 +401,7 @@ return {
         -- scope = { enabled = true },
         -- scroll = { enabled = true },
         statuscolumn = { enabled = true },
-        words = { enabled = true },
+        -- words = { enabled = true },
 
         profiler = {
           -- your profiler configuration comes here
