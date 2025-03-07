@@ -1,25 +1,11 @@
--- https://biomejs.dev/internals/language-support/
 local supported = {
-  'astro',
-  'css',
-  'graphql',
-  -- "html",
-  'javascript',
-  'javascriptreact',
-  'json',
-  'jsonc',
-  -- "markdown",
-  'svelte',
-  'typescript',
-  'typescriptreact',
-  'vue',
-  -- "yaml",
+  'blade',
 }
 
 return {
   {
     'williamboman/mason.nvim',
-    opts = { ensure_installed = { 'biome' } },
+    opts = { ensure_installed = { 'blade-formatter' } },
   },
 
   {
@@ -30,12 +16,13 @@ return {
       opts.formatters_by_ft = opts.formatters_by_ft or {}
       for _, ft in ipairs(supported) do
         opts.formatters_by_ft[ft] = opts.formatters_by_ft[ft] or {}
-        table.insert(opts.formatters_by_ft[ft], 'biome-check')
+        table.insert(opts.formatters_by_ft[ft], 'blade-formatter')
       end
 
       opts.formatters = opts.formatters or {}
-      opts.formatters['biome-check'] = {
+      opts.formatters['blade-formatter'] = {
         require_cwd = true,
+        prepend_args = { '-i', '2' },
       }
     end,
   },
@@ -47,7 +34,7 @@ return {
     opts = function(_, opts)
       local nls = require('null-ls')
       opts.sources = opts.sources or {}
-      table.insert(opts.sources, nls.builtins.formatting.biome)
+      table.insert(opts.sources, nls.builtins.formatting.blade_formatter)
     end,
   },
 }

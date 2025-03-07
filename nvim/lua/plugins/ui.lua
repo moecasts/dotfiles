@@ -155,6 +155,20 @@ return {
     end,
   },
 
+  -- icons
+  {
+    'nvim-web-devicons',
+    config = function()
+      require('nvim-web-devicons').setup({
+        override = {
+          ['blade.php'] = {
+            icon = '',
+          },
+        },
+      })
+    end,
+  },
+
   -- colorscheme - nord
   -- {
   --   'ten3roberts/nord.nvim',
