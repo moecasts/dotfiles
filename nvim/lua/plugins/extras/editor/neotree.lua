@@ -107,27 +107,6 @@ return {
               })
             end,
 
-            find_in_directory_spectre = function(state)
-              local node = state.tree:get_node()
-              local filepath = node:get_id()
-              local modify = vim.fn.fnamemodify
-              local dirpath = modify(filepath, ':.')
-
-              -- check if the dirpath is a directory
-              if vim.fn.isdirectory(dirpath) == 0 then
-                print('Error: ' .. dirpath .. ' is not a directory.')
-                return
-              end
-
-              local path = ('%s/**/*'):format(dirpath)
-
-              require('spectre').open({
-                search_text = '',
-                replace_text = '',
-                path = path,
-              })
-            end,
-
             find_in_directory_grug_far = function(state)
               local node = state.tree:get_node()
               local filepath = node:get_id()
