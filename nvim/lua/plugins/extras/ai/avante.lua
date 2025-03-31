@@ -10,7 +10,7 @@ return {
       openai = {
         -- endpoint = 'https://api.deepseek.com/v1',
         endpoint = 'https://api.lkeap.cloud.tencent.com/v1',
-        model = 'deepseek-r1',
+        model = 'deepseek-v3-0324',
         -- model = 'deepseek-chat',
         -- model = 'deepseek-reasoner',
         timeout = 30000, -- Timeout in milliseconds
