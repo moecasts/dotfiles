@@ -4,8 +4,15 @@ return {
     'neovim/nvim-lspconfig',
     event = { 'BufReadPost', 'BufWritePost', 'BufNewFile' },
     dependencies = {
-      'mason.nvim',
-      'williamboman/mason-lspconfig.nvim',
+      {
+        'mason.nvim',
+        version = '^1.0.0',
+      },
+
+      {
+        'williamboman/mason-lspconfig.nvim',
+        version = '^1.0.0',
+      },
     },
     opts = {
       -- options for vim.diagnostic.config()
