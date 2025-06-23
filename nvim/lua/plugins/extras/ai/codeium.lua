@@ -13,7 +13,7 @@ return {
           enabled = true,
           key_bindings = {
             -- Accept the current completion.
-            accept = '<M-l>',
+            accept = '<Tab>',
           },
         },
       })
