@@ -11,6 +11,9 @@ return {
       -- Toggle the profiler highlights
       Snacks.toggle.profiler_highlights():map('<leader>ph')
 
+      -- Register notifier commands
+      vim.cmd([[command! Notifications :lua Snacks.notifier.show_history()<CR>]])
+
       return {
         -- your configuration comes here
         -- or leave it empty to use the default settings
