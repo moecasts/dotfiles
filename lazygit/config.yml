@@ -1,0 +1,5 @@
+promptToReturnFromSubprocess: false
+
+os:
+  edit: "[ -z \"$NVIM\" ] && (nvim -- {{filename}}) || (nvim --server $NVIM --remote-send '<cmd>close<cr><cmd>lua Editor.lazygit_open_file({{filename}}, {{line}})<CR>')"
+  editAtLine: "[ -z \"$NVIM\" ] && (nvim -- {{filename}}) || (nvim --server $NVIM --remote-send '<cmd>close<cr><cmd>lua Editor.lazygit_open_file({{filename}}, {{line}})<CR>')"
