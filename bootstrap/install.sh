@@ -19,6 +19,7 @@ INSTALL_GO=false
 INSTALL_TMUX=false
 INSTALL_FNM=false
 INSTALL_WECHAT=false
+INSTALL_WECOM=false
 INSTALL_QQ=false
 INSTALL_NETEASE_MUSIC=false
 INSTALL_WEZTERM=false
@@ -51,6 +52,7 @@ Options:
   --go          Install Go programming language
   --fnm         Install Fast Node Manager (fnm)
   --wechat      Install WeChat
+  --wecom       Install WeCom (WeChat Work)
   --qq          Install QQ
   --netease     Install NetEase Music
   --wezterm     Install WezTerm terminal
@@ -97,6 +99,10 @@ If no options are provided, an interactive menu will be shown.'
     --wechat)
       INSTALL_ALL=false
       INSTALL_WECHAT=true
+      ;;
+    --wecom)
+      INSTALL_ALL=false
+      INSTALL_WECOM=true
       ;;
     --qq)
       INSTALL_ALL=false
@@ -159,7 +165,7 @@ If no options are provided, an interactive menu will be shown.'
 probe_interactive() {
   if $INSTALL_ALL; then
     # Initialize all options to true (select all by default)
-    selected=(true true true true true true true true true true true true true true true true true true true true)
+    selected=(true true true true true true true true true true true true true true true true true true true true true)
 
     cursor=0
 
@@ -177,7 +183,7 @@ probe_interactive() {
     while true; do
       clear
       echo -e "Use arrow keys to navigate, space to select/deselect, enter to confirm:\n"
-      options=("Homebrew" "Oh My Zsh" "nvm" "Rust" "Go" "tmux" "fnm" "WeChat" "QQ" "NetEase Music" "WezTerm" "LazyGit" "fzf" "ripgrep" "Karabiner" "Rectangle" "fd" "Neovim (source)" "Yazi" "Postman")
+      options=("Homebrew" "Oh My Zsh" "nvm" "Rust" "Go" "tmux" "fnm" "WeChat" "WeCom" "QQ" "NetEase Music" "WezTerm" "LazyGit" "fzf" "ripgrep" "Karabiner" "Rectangle" "fd" "Neovim (source)" "Yazi" "Postman")
       echo "Please select components to install:"
 
       # Display option list
@@ -225,18 +231,19 @@ probe_interactive() {
         INSTALL_TMUX=${selected[5]}
         INSTALL_FNM=${selected[6]}
         INSTALL_WECHAT=${selected[7]}
-        INSTALL_QQ=${selected[8]}
-        INSTALL_NETEASE_MUSIC=${selected[9]}
-        INSTALL_WEZTERM=${selected[10]}
-        INSTALL_LAZYGIT=${selected[11]}
-        INSTALL_FZF=${selected[12]}
-        INSTALL_RIPGREP=${selected[13]}
-        INSTALL_KARABINER=${selected[14]}
-        INSTALL_RECTANGLE=${selected[15]}
-        INSTALL_FD=${selected[16]}
-        INSTALL_NVIM_SRC=${selected[17]}
-        INSTALL_YAZI=${selected[18]}
-        INSTALL_POSTMAN=${selected[19]}
+        INSTALL_WECOM=${selected[8]}
+        INSTALL_QQ=${selected[9]}
+        INSTALL_NETEASE_MUSIC=${selected[10]}
+        INSTALL_WEZTERM=${selected[11]}
+        INSTALL_LAZYGIT=${selected[12]}
+        INSTALL_FZF=${selected[13]}
+        INSTALL_RIPGREP=${selected[14]}
+        INSTALL_KARABINER=${selected[15]}
+        INSTALL_RECTANGLE=${selected[16]}
+        INSTALL_FD=${selected[17]}
+        INSTALL_NVIM_SRC=${selected[18]}
+        INSTALL_YAZI=${selected[19]}
+        INSTALL_POSTMAN=${selected[20]}
         INSTALL_ALL=false # 关闭全选模式
 
         echo -e "\n"
@@ -463,6 +470,25 @@ install_wechat() {
     fi
   else
     echo "WeChat installation is only supported on macOS with Homebrew."
+  fi
+}
+
+install_wecom() {
+  if [ "$OS" = "Darwin" ]; then
+    if ! command -v brew &>/dev/null; then
+      echo "Homebrew is required but not installed. Please install Homebrew first."
+      return 1
+    fi
+
+    # WeCom cask name on Homebrew is 'wechatwork'
+    if ! brew list --cask wechatwork &>/dev/null; then
+      echo "Installing WeCom (WeChat Work)..."
+      brew install --cask wechatwork
+    else
+      echo "WeCom is already installed."
+    fi
+  else
+    echo "WeCom installation is only supported on macOS with Homebrew."
   fi
 }
 
@@ -1023,6 +1049,10 @@ run() {
 
   if $INSTALL_WECHAT || $INSTALL_ALL; then
     install_wechat
+  fi
+
+  if $INSTALL_WECOM || $INSTALL_ALL; then
+    install_wecom
   fi
 
   if $INSTALL_QQ || $INSTALL_ALL; then
