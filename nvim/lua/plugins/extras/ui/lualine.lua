@@ -141,6 +141,7 @@ return {
   -- lsp symbol navigation for lualine
   {
     'SmiteshP/nvim-navic',
+    event = 'VeryLazy',
     lazy = true,
     init = function()
       vim.g.navic_silence = true

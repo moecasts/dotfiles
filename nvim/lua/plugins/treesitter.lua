@@ -85,6 +85,7 @@ return {
 
   {
     'kevinhwang91/nvim-ufo',
+    event = 'VeryLazy',
     dependencies = {
       'nvim-treesitter/nvim-treesitter',
       'kevinhwang91/promise-async',
@@ -114,6 +115,7 @@ return {
 
   {
     'nvim-treesitter/nvim-treesitter-textobjects',
+    event = 'VeryLazy',
     after = 'nvim-treesitter',
     requires = 'nvim-treesitter/nvim-treesitter',
     config = function()

@@ -2,6 +2,7 @@ return {
   -- lazygit
   {
     'kdheepak/lazygit.nvim',
+    event = 'VeryLazy',
     config = function()
       local function map(mode, l, r, desc)
         vim.keymap.set(mode, l, r, { buffer = buffer, desc = desc })
@@ -14,6 +15,7 @@ return {
   -- git conflicts
   {
     'akinsho/git-conflict.nvim',
+    event = 'VeryLazy',
     config = function()
       require('git-conflict').setup()
     end,
@@ -63,10 +65,5 @@ return {
         map('n', '<leader>gtb', ':<C-U>Gitsigns toggle_current_line_blame<CR>', 'GitSigns Toggle Current Line Blame')
       end,
     },
-  },
-
-  -- diffview
-  {
-    'sindrets/diffview.nvim',
   },
 }

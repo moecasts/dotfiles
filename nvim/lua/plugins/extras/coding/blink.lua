@@ -2,6 +2,7 @@ return {
   -- auto complete
   {
     'saghen/blink.cmp',
+    event = 'VeryLazy',
     dependencies = {
       'rafamadriz/friendly-snippets',
       'fang2hou/blink-copilot',

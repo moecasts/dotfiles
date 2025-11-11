@@ -2,6 +2,7 @@ return {
   -- change ts comment case
   {
     'moecasts/nvim-ts-comment-case',
+    event = 'VeryLazy',
     -- dir = '~/Developments/self/nvim/nvim-ts-comment-case',
     build = function(plugin)
       os.execute(string.format('cd %s && npm i --no-save', plugin.dir))
@@ -28,6 +29,7 @@ return {
   -- ts context commentstring
   {
     'JoosepAlviste/nvim-ts-context-commentstring',
+    event = 'VeryLazy',
     config = function()
       require('ts_context_commentstring').setup({
         enable_autocmd = true,
@@ -37,6 +39,7 @@ return {
 
   {
     'kkoomen/vim-doge',
+    event = 'VeryLazy',
     build = function(plugin)
       if vim.fn.system('arch') == 'arm64' then
         os.execute('cd ' .. plugin.dir .. '&& npm i --no-save && npm run build:binary:unix')
@@ -51,6 +54,7 @@ return {
   },
   {
     'danymat/neogen',
+    event = 'VeryLazy',
     dependencies = 'nvim-treesitter/nvim-treesitter',
     config = true,
   },
