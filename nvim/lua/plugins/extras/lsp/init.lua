@@ -2,7 +2,7 @@ return {
   -- lspconfig
   {
     'neovim/nvim-lspconfig',
-    event = { 'BufReadPost', 'BufWritePost', 'BufNewFile' },
+    event = { 'BufReadPre', 'BufReadPost', 'BufWritePost', 'BufNewFile' },
     dependencies = {
       {
         'mason.nvim',
@@ -182,7 +182,16 @@ return {
       local have_mason, mlsp = pcall(require, 'mason-lspconfig')
       local all_mslp_servers = {}
       if have_mason then
-        all_mslp_servers = vim.tbl_keys(require('mason-lspconfig.mappings.server').lspconfig_to_package)
+        -- Try new API first (mason-lspconfig >= 1.0.0)
+        if mlsp.get_available_servers then
+          all_mslp_servers = mlsp.get_available_servers()
+        else
+          -- Fallback to old API for older versions
+          local ok, mappings = pcall(require, 'mason-lspconfig.mappings.server')
+          if ok then
+            all_mslp_servers = vim.tbl_keys(mappings.lspconfig_to_package)
+          end
+        end
       end
 
       local ensure_installed = {} ---@type string[]
