@@ -4,6 +4,7 @@ return {
     'yetone/avante.nvim',
     event = 'VeryLazy',
     version = false, -- set this if you want to always pull the latest change
+    enabled = false,
     opts = {
       provider = 'openai',
       auto_suggestions_provider = 'openai', -- Since auto-suggestions are a high-frequency operation and therefore expensive, it is recommended to specify an inexpensive provider or even a free provider: copilot
