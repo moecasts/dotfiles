@@ -9,6 +9,27 @@ local function map(mode, lhs, rhs, opts)
   end
 end
 
+-- yank
+-- Copy file path with line numbers
+map('v', '<leader>y', function()
+  local start_line = vim.fn.line('v')
+  local end_line = vim.fn.line('.')
+  if start_line > end_line then
+    start_line, end_line = end_line, start_line
+  end
+
+  local filepath = vim.fn.expand('%:~:.')
+  local result = '@' .. filepath .. '#L' .. start_line
+  if start_line ~= end_line then
+    result = result .. '-' .. end_line
+  end
+
+  vim.fn.setreg('+', result)
+  vim.notify('Copied: ' .. result, vim.log.levels.INFO)
+  -- Exit visual mode to deselect
+  vim.cmd('normal! ' .. vim.api.nvim_replace_termcodes('<Esc>', true, false, true))
+end, { desc = 'Copy file path with line numbers' })
+
 -- buffers
 if Editor.has('bufferline.nvim') then
   map('n', '<S-h>', '<cmd>BufferLineCyclePrev<cr>', { desc = 'Prev buffer' })
