@@ -6,12 +6,9 @@ return {
     dependencies = {
       {
         'mason.nvim',
-        version = '^1.0.0',
       },
-
       {
         'williamboman/mason-lspconfig.nvim',
-        version = '^1.0.0',
       },
     },
     opts = {
@@ -175,7 +172,14 @@ return {
             return
           end
         end
-        require('lspconfig')[server].setup(server_opts)
+
+        -- Use new API if available (nvim 0.11+), fallback to old API for backward compatibility
+        if vim.lsp.config then
+          vim.lsp.config(server, server_opts)
+          vim.lsp.enable(server)
+        else
+          require('lspconfig')[server].setup(server_opts)
+        end
       end
 
       -- get all the servers that are available through mason-lspconfig
@@ -225,7 +229,17 @@ return {
       end
 
       if Editor.lsp.is_enabled('denols') and Editor.lsp.is_enabled('vtsls') then
-        local is_deno = require('lspconfig.util').root_pattern('deno.json', 'deno.jsonc')
+        -- Use vim.lsp.config for new API, lspconfig.util for old API
+        local root_pattern_fn
+        if vim.lsp.config then
+          root_pattern_fn = vim.fs.root
+        else
+          root_pattern_fn = require('lspconfig.util').root_pattern
+        end
+
+        local is_deno = type(root_pattern_fn) == 'function' and root_pattern_fn('deno.json', 'deno.jsonc')
+          or require('lspconfig.util').root_pattern('deno.json', 'deno.jsonc')
+
         Editor.lsp.disable('vtsls', is_deno)
         Editor.lsp.disable('denols', function(root_dir, config)
           if not is_deno(root_dir) then

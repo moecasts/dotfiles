@@ -315,4 +315,48 @@ function M.lazygit_open_file(filename, line)
   end
 end
 
+--- Deep extend a table at a specific path
+---@param tbl table
+---@param path string Dot-separated path like "settings.vtsls.tsserver.globalPlugins"
+---@param value any Value to append (for tables) or set
+function M.extend(tbl, path, value)
+  local keys = vim.split(path, '.', { plain = true })
+  local current = tbl
+
+  -- Navigate to the parent of the target key
+  for i = 1, #keys - 1 do
+    local key = keys[i]
+    if current[key] == nil then
+      current[key] = {}
+    end
+    current = current[key]
+  end
+
+  local last_key = keys[#keys]
+  if current[last_key] == nil then
+    current[last_key] = {}
+  end
+
+  -- If the target is a table and value is a table, append; otherwise set
+  if type(current[last_key]) == 'table' and type(value) == 'table' then
+    for _, v in ipairs(value) do
+      table.insert(current[last_key], v)
+    end
+  else
+    current[last_key] = value
+  end
+end
+
+--- Get package path for a given package and subpath
+---@param pkg string Package name like "vue-language-server"
+---@param subpath? string Optional subpath within the package
+---@return string
+function M.get_pkg_path(pkg, subpath)
+  local root = vim.fn.stdpath('data') .. '/mason/packages/' .. pkg
+  if subpath then
+    return root .. subpath
+  end
+  return root
+end
+
 return M
