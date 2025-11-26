@@ -1,6 +1,12 @@
 local lsp = 'intelephense'
 
 return {
+  recommended = {
+    ft = 'php',
+    root = { 'composer.json', 'composer.lock', '.php-version' },
+  },
+
+  desc = 'PHP support with Intelephense LSP',
   {
     'nvim-treesitter/nvim-treesitter',
     opts = { ensure_installed = { 'php' } },

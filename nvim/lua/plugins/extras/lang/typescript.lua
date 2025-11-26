@@ -1,4 +1,13 @@
 return {
+  recommended = function()
+    return Editor.extras.wants({
+      ft = { 'typescript', 'typescriptreact', 'javascript', 'javascriptreact' },
+      root = { 'package.json', 'tsconfig.json', 'jsconfig.json', 'yarn.lock', 'package-lock.json' },
+    })
+  end,
+
+  desc = 'TypeScript/JavaScript support with vtsls LSP',
+
   -- correctly setup lspconfig
   {
     'neovim/nvim-lspconfig',

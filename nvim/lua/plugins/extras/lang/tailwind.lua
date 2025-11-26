@@ -12,6 +12,22 @@ local config_files = {
 }
 
 return {
+  recommended = function()
+    return Editor.extras.wants({
+      root = {
+        'tailwind.config.js',
+        'tailwind.config.cjs',
+        'tailwind.config.mjs',
+        'tailwind.config.ts',
+        'postcss.config.js',
+        'postcss.config.cjs',
+        'postcss.config.mjs',
+        'postcss.config.ts',
+      },
+    })
+  end,
+
+  desc = 'Tailwind CSS support with LSP and colorizer',
   {
     'neovim/nvim-lspconfig',
     opts = {

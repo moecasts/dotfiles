@@ -8,6 +8,13 @@ Editor.on_very_lazy(function()
 end)
 
 return {
+  recommended = {
+    ft = { 'markdown', 'markdown.mdx' },
+    root = { 'README.md', 'CHANGELOG.md' },
+  },
+
+  desc = 'Markdown support with enhanced features',
+
   {
     'stevearc/conform.nvim',
     optional = true,

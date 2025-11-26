@@ -1,4 +1,11 @@
 return {
+  recommended = {
+    ft = 'vue',
+    root = { 'vue.config.js', 'vue.config.ts', 'nuxt.config.js', 'nuxt.config.ts' },
+  },
+
+  desc = 'Vue.js support with Volar LSP',
+
   -- depends on the typescript extra
   -- { import = 'lazyvim.plugins.extras.lang.typescript' },
 
