@@ -1,4 +1,11 @@
 return {
+  recommended = {
+    ft = 'go',
+    root = { 'go.mod', 'go.sum', 'go.work' },
+  },
+
+  desc = 'Go support with gopls LSP',
+
   {
     'nvim-treesitter/nvim-treesitter',
     opts = { ensure_installed = { 'go', 'gomod', 'gowork', 'gosum' } },

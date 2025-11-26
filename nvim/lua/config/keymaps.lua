@@ -9,6 +9,14 @@ local function map(mode, lhs, rhs, opts)
   end
 end
 
+-- Register EditorExtras command
+vim.api.nvim_create_user_command('EditorExtras', function()
+  require('util.extras').show()
+end, { desc = 'Manage Editor Extras' })
+
+-- Add keymap for EditorExtras
+map('n', '<leader>ce', '<cmd>EditorExtras<cr>', { desc = 'Editor Extras' })
+
 -- yank
 -- Copy file path with line numbers
 map('v', '<leader>y', function()

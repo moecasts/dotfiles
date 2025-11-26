@@ -1,4 +1,10 @@
 return {
+  recommended = {
+    ft = { 'scss', 'sass' },
+  },
+
+  desc = 'SCSS/Sass support with LSP',
+
   {
     -- correctly setup lspconfig
     {

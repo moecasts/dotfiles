@@ -1,4 +1,5 @@
 ---@class EditorConfig: EditorOptions
+---@field extras editor.util.extras
 local M = {}
 
 ---@class EditorOptions
@@ -124,6 +125,11 @@ end
 
 setmetatable(M, {
   __index = function(_, key)
+    -- Special handling for extras
+    if key == 'extras' then
+      return require('util.extras')
+    end
+    
     if options == nil then
       return vim.deepcopy(defaults)[key]
     end

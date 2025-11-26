@@ -9,6 +9,13 @@
 local diagnostics = vim.g.Editor_rust_diagnostics or 'rust-analyzer'
 
 return {
+  recommended = {
+    ft = 'rust',
+    root = { 'Cargo.toml', 'Cargo.lock' },
+  },
+
+  desc = 'Rust support with rust-analyzer LSP',
+
   -- LSP for Cargo.toml
   {
     'Saecki/crates.nvim',

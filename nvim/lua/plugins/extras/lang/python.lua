@@ -2,6 +2,15 @@ local lsp = 'pyright'
 local ruff = 'ruff'
 
 return {
+  recommended = function()
+    return Editor.extras.wants({
+      ft = 'python',
+      root = { 'requirements.txt', 'pyproject.toml', 'setup.py', 'setup.cfg', 'Pipfile', 'pyrightconfig.json' },
+    })
+  end,
+
+  desc = 'Python support with Pyright LSP and Ruff',
+
   {
     'nvim-treesitter/nvim-treesitter',
     opts = { ensure_installed = { 'ninja', 'rst' } },
