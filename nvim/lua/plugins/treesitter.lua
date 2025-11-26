@@ -10,9 +10,6 @@ return {
       { '<c-space>', desc = 'Increment selection' },
       { '<bs>', desc = 'Schrink selection', mode = 'x' },
     },
-    dependencies = {
-      'windwp/nvim-ts-autotag',
-    },
     ---@type TSConfig
     opts = {
       highlight = {
@@ -57,10 +54,6 @@ return {
           scope_incremental = '<nop>',
           node_decremental = '<bs>',
         },
-      },
-      autotag = {
-        enable = true,
-        enable_close_on_slash = false,
       },
     },
     ---@param opns TSConfig
