@@ -460,5 +460,5 @@ set-option -ga terminal-overrides ',xterm*:Tc:sitm=\E[3m'
 set -g @plugin "arcticicestudio/nord-tmux"
 
 # -- bindings ----------------------------------------------------------
-bind-key C-J swap-window -t -1\; select-window -t -1
-bind-key C-K swap-window -t +1\; select-window -t +1
+bind-key C-j swap-window -t -1\; select-window -t -1
+bind-key C-k swap-window -t +1\; select-window -t +1
