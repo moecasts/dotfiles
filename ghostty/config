@@ -1,0 +1,25 @@
+# font
+# primary font family
+font-family = "Operator Mono Lig"
+# fallback font family
+font-family = "FiraCode Nerd Font Mono Regular"
+
+# font size
+font-size = 16
+
+# apperance
+theme = nordfox
+
+# bold font color
+bold-color = bright
+
+# window opacity
+background-opacity = 0.96
+
+# window padding
+window-padding-x = 16
+window-padding-y = 16
+
+# cursor
+shell-integration-features = no-cursor
+cursor-style = block
