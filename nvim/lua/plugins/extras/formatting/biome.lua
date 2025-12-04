@@ -16,6 +16,11 @@ local supported = {
   -- "yaml",
 }
 
+local config_files = {
+  'biome.json',
+  'biome.jsonc',
+}
+
 return {
   {
     'williamboman/mason.nvim',
@@ -36,6 +41,8 @@ return {
       opts.formatters = opts.formatters or {}
       opts.formatters['biome-check'] = {
         require_cwd = true,
+        append_args = { '--unsafe' },
+        condition = require('conform.util').root_file(config_files),
       }
     end,
   },
@@ -47,7 +54,14 @@ return {
     opts = function(_, opts)
       local nls = require('null-ls')
       opts.sources = opts.sources or {}
-      table.insert(opts.sources, nls.builtins.formatting.biome)
+      table.insert(
+        opts.sources,
+        nls.builtins.formatting.biome.with({
+          condition = function(utils)
+            return utils.root_has_file(config_files)
+          end,
+        })
+      )
     end,
   },
 }

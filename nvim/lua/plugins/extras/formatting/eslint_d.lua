@@ -10,6 +10,14 @@ local supported = {
   'markdown',
 }
 
+local config_files = {
+  '.eslintrc',
+  '.eslintrc.*',
+  'eslint.config.js',
+  'eslint.config.mjs',
+  'eslint.config.cjs',
+}
+
 return {
   {
     'williamboman/mason.nvim',
@@ -29,6 +37,7 @@ return {
       opts.formatters = opts.formatters or {}
       opts.formatters.eslint_d = {
         require_cwd = true,
+        condition = require('conform.util').root_file(config_files),
       }
     end,
   },
