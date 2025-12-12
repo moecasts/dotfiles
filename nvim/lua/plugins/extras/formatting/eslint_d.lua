@@ -11,11 +11,21 @@ local supported = {
 }
 
 local config_files = {
+  -- old
   '.eslintrc',
-  '.eslintrc.*',
+  '.eslintrc.js',
+  '.eslintrc.cjs',
+  '.eslintrc.yaml',
+  '.eslintrc.yml',
+  '.eslintrc.json',
+
+  -- new
   'eslint.config.js',
   'eslint.config.mjs',
   'eslint.config.cjs',
+  'eslint.config.ts',
+  'eslint.config.mts',
+  'eslint.config.cts',
 }
 
 return {
