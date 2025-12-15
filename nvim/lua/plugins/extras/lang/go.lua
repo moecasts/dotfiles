@@ -16,7 +16,6 @@ return {
     opts = {
       servers = {
         gopls = {
-          version = 'v0.17.1',
           settings = {
             gopls = {
               gofumpt = true,
