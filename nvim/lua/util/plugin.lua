@@ -17,11 +17,11 @@ function M.generate_import_specs(root)
     end
 
     while true do
-      local name, type = uv.fs_scandir_next(handle)
+      local name, file_type = uv.fs_scandir_next(handle)
       if not name then
         break
       end
-      if type == 'file' and name:match('%.lua$') then
+      if file_type == 'file' and name:match('%.lua$') then
         return true
       end
     end
@@ -36,13 +36,13 @@ function M.generate_import_specs(root)
     end
 
     while true do
-      local name, type = uv.fs_scandir_next(handle)
+      local name, file_type = uv.fs_scandir_next(handle)
       if not name then
         break
       end
       local path = dir .. '/' .. name
       local import_path = base .. '/' .. name
-      if type == 'directory' then
+      if file_type == 'directory' then
         if has_lua_files(path) then
           table.insert(specs, { import = import_path })
         end
@@ -78,16 +78,16 @@ function M.generate_plugins_specs()
     end
 
     while true do
-      local name, type = uv.fs_scandir_next(handle)
+      local name, file_type = uv.fs_scandir_next(handle)
       if not name then
         break
       end
       local path = dir .. '/' .. name
       local import_path = base .. '/' .. name
 
-      if type == 'directory' then
+      if file_type == 'directory' then
         vim.list_extend(result, scan_dir_with_filter(path, import_path))
-      elseif type == 'file' and name:match('%.lua$') and name ~= 'init.lua' then
+      elseif file_type == 'file' and name:match('%.lua$') and name ~= 'init.lua' then
         -- Load the module and filter metadata
         local module_name = import_path:gsub('%.lua$', '')
         local ok, module_data = pcall(require, module_name)
@@ -95,7 +95,10 @@ function M.generate_plugins_specs()
           -- Extract only plugin specs (numeric indices)
           for key, value in pairs(module_data) do
             if type(key) == 'number' then
-              table.insert(result, value)
+              -- Only add if the value looks like a valid plugin spec (string or table)
+              if type(value) == 'string' or (type(value) == 'table' and type(value[1]) == 'string') then
+                table.insert(result, value)
+              end
             end
           end
         end
@@ -113,13 +116,13 @@ function M.generate_plugins_specs()
     end
 
     while true do
-      local name, type = uv.fs_scandir_next(handle)
+      local name, file_type = uv.fs_scandir_next(handle)
       if not name then
         break
       end
       local path = dir .. '/' .. name
       local import_path = base .. '/' .. name
-      if type == 'directory' then
+      if file_type == 'directory' then
         table.insert(result, { import = import_path })
         vim.list_extend(result, scan_dir(path, import_path))
       end
@@ -158,7 +161,10 @@ function M.generate_plugins_specs()
           -- Extract only plugin specs (numeric indices)
           for key, value in pairs(module_data) do
             if type(key) == 'number' then
-              table.insert(specs, value)
+              -- Only add if the value looks like a valid plugin spec (string or table)
+              if type(value) == 'string' or (type(value) == 'table' and type(value[1]) == 'string') then
+                table.insert(specs, value)
+              end
             end
           end
         end
