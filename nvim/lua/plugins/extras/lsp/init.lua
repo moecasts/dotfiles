@@ -1,31 +1,20 @@
 return {
-  -- lspconfig
+  -- LSP Configuration
   {
     'neovim/nvim-lspconfig',
     event = { 'BufReadPre', 'BufReadPost', 'BufWritePost', 'BufNewFile' },
     dependencies = {
-      {
-        'mason.nvim',
-      },
-      {
-        'williamboman/mason-lspconfig.nvim',
-      },
+      'mason.nvim',
+      { 'williamboman/mason-lspconfig.nvim', config = function() end },
     },
+    ---@class PluginLspOpts
     opts = {
-      -- options for vim.diagnostic.config()
+      -- Diagnostics configuration
       ---@type vim.diagnostic.Opts
       diagnostics = {
         underline = true,
         update_in_insert = false,
         virtual_text = false,
-        -- virtual_text = {
-        --   spacing = 4,
-        --   source = "if_many",
-        --   prefix = "●",
-        --   -- this will set set the prefix to a function that returns the diagnostics icon based on the severity
-        --   -- this only works on a recent 0.10.0 build. Will be set to "●" when not supported
-        --   -- prefix = "icons",
-        -- },
         severity_sort = true,
         signs = {
           text = {
@@ -36,55 +25,60 @@ return {
           },
         },
       },
-      -- Enable this to enable the builtin LSP inlay hints on Neovim >= 0.10.0
-      -- Be aware that you also will need to properly configure your LSP server to
-      -- provide the inlay hints.
+
+      -- Inlay hints
       inlay_hints = {
         enabled = false,
-        exclude = { 'vue' }, -- filetypes for which you don't want to enable inlay hints
+        exclude = { 'vue' },
       },
-      -- Enable this to enable the builtin LSP code lenses on Neovim >= 0.10.0
-      -- Be aware that you also will need to properly configure your LSP server to
-      -- provide the code lenses.
+
+      -- Code lenses
       codelens = {
         enabled = false,
       },
-      -- add any global capabilities here
-      capabilities = {
-        workspace = {
-          fileOperations = {
-            didRename = true,
-            willRename = true,
-          },
-        },
-      },
-      -- options for vim.lsp.buf.format
-      -- `bufnr` and `filter` is handled by the Editor formatter,
-      -- but can be also overridden when specified
+
+      -- Format options
       format = {
         formatting_options = nil,
         timeout_ms = nil,
       },
 
       -- LSP Server Settings
-      ---@type lspconfig.options
+      ---@type table<string, vim.lsp.Config|boolean>
       servers = {
+        -- Global capabilities for all servers
+        ['*'] = {
+          capabilities = {
+            workspace = {
+              fileOperations = {
+                didRename = true,
+                willRename = true,
+              },
+            },
+          },
+        },
+
+        -- Individual server configurations
         jsonls = {},
         cssls = {},
         html = {},
         lua_ls = {},
-        -- pyright = {},
         bashls = {},
         yamlls = {},
       },
 
+      -- Custom setup handlers
+      -- Return true to prevent default setup
+      ---@type table<string, fun(server:string, opts:vim.lsp.Config):boolean?>
       setup = {},
     },
-    config = function(plugin, opts)
-      -- setup autoformat
+
+    ---@param opts PluginLspOpts
+    config = function(_, opts)
+      -- Setup autoformat
       Editor.format.register(Editor.lsp.formatter())
 
-      -- setup formatting and keymaps
+      -- Setup keymaps and LSP handlers
       require('util').on_attach(function(client, buffer)
         require('util.lsp-keymaps').on_attach(client, buffer)
       end)
@@ -92,157 +86,112 @@ return {
       Editor.lsp.setup()
       Editor.lsp.on_dynamic_capability(require('util.lsp-keymaps').on_attach)
 
-      -- diagnostics signs
-      if vim.fn.has('nvim-0.10.0') == 0 then
-        if type(opts.diagnostics.signs) ~= 'boolean' then
-          for severity, icon in pairs(opts.diagnostics.signs.text) do
-            local name = vim.diagnostic.severity[severity]:lower():gsub('^%l', string.upper)
-            name = 'DiagnosticSign' .. name
-            vim.fn.sign_define(name, { text = icon, texthl = name, numhl = '' })
+      -- Configure inlay hints
+      if opts.inlay_hints.enabled then
+        Editor.lsp.on_supports_method('textDocument/inlayHint', function(client, buffer)
+          if
+            vim.api.nvim_buf_is_valid(buffer)
+            and vim.bo[buffer].buftype == ''
+            and not vim.tbl_contains(opts.inlay_hints.exclude, vim.bo[buffer].filetype)
+          then
+            vim.lsp.inlay_hint.enable(true, { bufnr = buffer })
           end
-        end
+        end)
       end
 
-      if vim.fn.has('nvim-0.10') == 1 then
-        -- inlay hints
-        if opts.inlay_hints.enabled then
-          Editor.lsp.on_supports_method('textDocument/inlayHint', function(client, buffer)
-            if
-              vim.api.nvim_buf_is_valid(buffer)
-              and vim.bo[buffer].buftype == ''
-              and not vim.tbl_contains(opts.inlay_hints.exclude, vim.bo[buffer].filetype)
-            then
-              vim.lsp.inlay_hint.enable(true, { bufnr = buffer })
-            end
-          end)
-        end
-
-        -- code lens
-        if opts.codelens.enabled and vim.lsp.codelens then
-          Editor.lsp.on_supports_method('textDocument/codeLens', function(client, buffer)
-            vim.lsp.codelens.refresh()
-            vim.api.nvim_create_autocmd({ 'BufEnter', 'CursorHold', 'InsertLeave' }, {
-              buffer = buffer,
-              callback = vim.lsp.codelens.refresh,
-            })
-          end)
-        end
+      -- Configure code lenses
+      if opts.codelens.enabled and vim.lsp.codelens then
+        Editor.lsp.on_supports_method('textDocument/codeLens', function(client, buffer)
+          vim.lsp.codelens.refresh()
+          vim.api.nvim_create_autocmd({ 'BufEnter', 'CursorHold', 'InsertLeave' }, {
+            buffer = buffer,
+            callback = vim.lsp.codelens.refresh,
+          })
+        end)
       end
 
-      if type(opts.diagnostics.virtual_text) == 'table' and opts.diagnostics.virtual_text.prefix == 'icons' then
-        opts.diagnostics.virtual_text.prefix = vim.fn.has('nvim-0.10.0') == 0 and '●'
-          or function(diagnostic)
-            local icons = Editor.config.icons.diagnostics
-            for d, icon in pairs(icons) do
-              if diagnostic.severity == vim.diagnostic.severity[d:upper()] then
-                return icon
-              end
-            end
-          end
-      end
-
+      -- Configure diagnostics
       vim.diagnostic.config(vim.deepcopy(opts.diagnostics))
 
-      local servers = opts.servers
-      local has_cmp, cmp_nvim_lsp = pcall(require, 'cmp_nvim_lsp')
-      local has_blink, blink = pcall(require, 'blink.cmp')
-      local capabilities = vim.tbl_deep_extend(
-        'force',
-        {},
-        vim.lsp.protocol.make_client_capabilities(),
-        has_cmp and cmp_nvim_lsp.default_capabilities() or {},
-        has_blink and blink.get_lsp_capabilities() or {},
-        opts.capabilities or {}
-      )
+      -- Apply global server configuration
+      if opts.servers['*'] then
+        vim.lsp.config('*', opts.servers['*'])
+      end
 
-      local function setup(server)
-        local server_opts = vim.tbl_deep_extend('force', {
-          capabilities = vim.deepcopy(capabilities),
-        }, servers[server] or {})
+      -- Get mason-lspconfig servers
+      local have_mason = pcall(require, 'mason-lspconfig')
+      local mason_all = have_mason
+          and vim.tbl_keys(require('mason-lspconfig.mappings').get_mason_map().lspconfig_to_package)
+        or {}
+
+      -- Build exclusion list: only enable servers explicitly configured in opts.servers
+      -- This prevents mason from auto-enabling servers from disabled extras
+      local configured_servers = vim.tbl_keys(opts.servers)
+      local mason_exclude = {} ---@type string[]
+
+      for _, server in ipairs(mason_all) do
+        if not vim.tbl_contains(configured_servers, server) then
+          -- Server is not configured, exclude it from automatic enabling
+          mason_exclude[#mason_exclude + 1] = server
+        end
+      end
+
+      -- Configure individual servers
+      ---@param server string
+      ---@return boolean? use_mason
+      local function configure(server)
+        if server == '*' then
+          return false
+        end
+
+        local server_opts = opts.servers[server]
+        -- Normalize options
+        server_opts = server_opts == true and {} or (not server_opts) and { enabled = false } or server_opts
+
         if server_opts.enabled == false then
+          -- Also add disabled servers to exclusion list
+          if not vim.tbl_contains(mason_exclude, server) then
+            mason_exclude[#mason_exclude + 1] = server
+          end
           return
         end
 
-        if opts.setup[server] then
-          if opts.setup[server](server, server_opts) then
-            return
-          end
-        elseif opts.setup['*'] then
-          if opts.setup['*'](server, server_opts) then
-            return
-          end
-        end
+        local use_mason = server_opts.mason ~= false and vim.tbl_contains(mason_all, server)
+        local setup = opts.setup[server] or opts.setup['*']
 
-        -- Use new API if available (nvim 0.11+), fallback to old API for backward compatibility
-        if vim.lsp.config then
+        if setup and setup(server, server_opts) then
+          -- Custom setup handled it, exclude from automatic enabling
+          if not vim.tbl_contains(mason_exclude, server) then
+            mason_exclude[#mason_exclude + 1] = server
+          end
+        else
+          -- Standard setup
           vim.lsp.config(server, server_opts)
-          vim.lsp.enable(server)
-        else
-          require('lspconfig')[server].setup(server_opts)
-        end
-      end
-
-      -- get all the servers that are available through mason-lspconfig
-      local have_mason, mlsp = pcall(require, 'mason-lspconfig')
-      local all_mslp_servers = {}
-      if have_mason then
-        -- Try new API first (mason-lspconfig >= 1.0.0)
-        if mlsp.get_available_servers then
-          all_mslp_servers = mlsp.get_available_servers()
-        else
-          -- Fallback to old API for older versions
-          local ok, mappings = pcall(require, 'mason-lspconfig.mappings.server')
-          if ok then
-            all_mslp_servers = vim.tbl_keys(mappings.lspconfig_to_package)
+          if not use_mason then
+            vim.lsp.enable(server)
           end
         end
+
+        return use_mason
       end
 
-      local ensure_installed = {} ---@type string[]
-      for server, server_opts in pairs(servers) do
-        if server_opts then
-          server_opts = server_opts == true and {} or server_opts
-          if server_opts.enabled ~= false then
-            -- run manual setup if mason=false or if this is a server that cannot be installed with mason-lspconfig
-            if server_opts.mason == false or not vim.tbl_contains(all_mslp_servers, server) then
-              setup(server)
-            else
-              local server_identifier = server
-              if server_opts.version then
-                server_identifier = server .. '@' .. server_opts.version
-              end
-              ensure_installed[#ensure_installed + 1] = server_identifier
-            end
-          end
-        end
-      end
+      -- Configure all servers and collect mason-managed ones
+      local mason_install = vim.tbl_filter(configure, vim.tbl_keys(opts.servers))
 
+      -- Setup mason-lspconfig
       if have_mason then
-        mlsp.setup({
-          ensure_installed = vim.tbl_deep_extend(
-            'force',
-            ensure_installed,
-            Editor.opts('mason-lspconfig.nvim').ensure_installed or {}
-          ),
-          handlers = { setup },
+        require('mason-lspconfig').setup({
+          ensure_installed = vim.list_extend(mason_install, Editor.opts('mason-lspconfig.nvim').ensure_installed or {}),
+          automatic_enable = { exclude = mason_exclude },
         })
       end
 
+      -- Handle Deno/vtsls conflict
       if Editor.lsp.is_enabled('denols') and Editor.lsp.is_enabled('vtsls') then
-        -- Use vim.lsp.config for new API, lspconfig.util for old API
-        local root_pattern_fn
-        if vim.lsp.config then
-          root_pattern_fn = vim.fs.root
-        else
-          root_pattern_fn = require('lspconfig.util').root_pattern
-        end
-
-        local is_deno = type(root_pattern_fn) == 'function' and root_pattern_fn('deno.json', 'deno.jsonc')
-          or require('lspconfig.util').root_pattern('deno.json', 'deno.jsonc')
-
+        local is_deno = vim.fs.root(0, { 'deno.json', 'deno.jsonc' })
         Editor.lsp.disable('vtsls', is_deno)
         Editor.lsp.disable('denols', function(root_dir, config)
-          if not is_deno(root_dir) then
+          if not vim.fs.root(root_dir, { 'deno.json', 'deno.jsonc' }) then
             config.settings.deno.enable = false
           end
           return false
@@ -251,11 +200,12 @@ return {
     end,
   },
 
-  -- cmdline tools and lsp servers
+  -- Mason Package Manager
   {
     'williamboman/mason.nvim',
     cmd = 'Mason',
     keys = { { '<leader>cm', '<cmd>Mason<cr>', desc = 'Mason' } },
+    build = ':MasonUpdate',
     opts_extend = { 'ensure_installed' },
     opts = {
       ensure_installed = {
@@ -268,15 +218,29 @@ return {
       },
     },
     ---@param opts MasonSettings | {ensure_installed: string[]}
-    config = function(plugin, opts)
+    config = function(_, opts)
       require('mason').setup(opts)
       local mr = require('mason-registry')
-      for _, tool in ipairs(opts.ensure_installed) do
-        local p = mr.get_package(tool)
-        if not p:is_installed() then
-          p:install()
+
+      -- Auto-reload LSP after package install
+      mr:on('package:install:success', function()
+        vim.defer_fn(function()
+          require('lazy.core.handler.event').trigger({
+            event = 'FileType',
+            buf = vim.api.nvim_get_current_buf(),
+          })
+        end, 100)
+      end)
+
+      -- Install packages
+      mr.refresh(function()
+        for _, tool in ipairs(opts.ensure_installed) do
+          local p = mr.get_package(tool)
+          if not p:is_installed() then
+            p:install()
+          end
         end
-      end
+      end)
     end,
   },
 }
