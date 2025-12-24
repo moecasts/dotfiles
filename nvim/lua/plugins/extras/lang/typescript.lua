@@ -97,11 +97,11 @@ return {
               end,
               desc = 'File References',
             },
-            {
-              '<leader>co',
-              Editor.lsp.action['source.organizeImports'],
-              desc = 'Organize Imports',
-            },
+            -- {
+            --   '<leader>co',
+            --   Editor.lsp.action['source.organizeImports'],
+            --   desc = 'Organize Imports',
+            -- },
             {
               '<leader>cM',
               Editor.lsp.action['source.addMissingImports.ts'],
