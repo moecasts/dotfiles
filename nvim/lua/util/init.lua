@@ -289,7 +289,6 @@ for _, level in ipairs({ 'info', 'warn', 'error' }) do
 end
 
 function M.lazygit_open_file(filename, line)
-  print(filename, line)
   if not filename then
     return
   end
