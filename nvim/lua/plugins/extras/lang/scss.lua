@@ -6,6 +6,11 @@ return {
   desc = 'SCSS/Sass support with LSP',
 
   {
+    'nvim-treesitter/nvim-treesitter',
+    opts = { ensure_installed = { 'scss', 'css' } },
+  },
+
+  {
     -- correctly setup lspconfig
     {
       'neovim/nvim-lspconfig',

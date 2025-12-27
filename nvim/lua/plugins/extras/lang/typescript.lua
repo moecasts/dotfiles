@@ -8,6 +8,11 @@ return {
 
   desc = 'TypeScript/JavaScript support with vtsls LSP',
 
+  {
+    'nvim-treesitter/nvim-treesitter',
+    opts = { ensure_installed = { 'typescript', 'tsx', 'javascript', 'jsdoc' } },
+  },
+
   -- correctly setup lspconfig
   {
     'neovim/nvim-lspconfig',

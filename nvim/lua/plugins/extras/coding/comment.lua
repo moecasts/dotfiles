@@ -14,27 +14,12 @@ return {
     end,
   },
 
+  -- 增强 Neovim 原生注释功能，支持 treesitter 上下文
   {
-    'echasnovski/mini.comment',
+    'folke/ts-comments.nvim',
     event = 'VeryLazy',
-    opts = {
-      options = {
-        custom_commentstring = function()
-          return require('ts_context_commentstring.internal').calculate_commentstring() or vim.bo.commentstring
-        end,
-      },
-    },
-  },
-
-  -- ts context commentstring
-  {
-    'JoosepAlviste/nvim-ts-context-commentstring',
-    event = 'VeryLazy',
-    config = function()
-      require('ts_context_commentstring').setup({
-        enable_autocmd = true,
-      })
-    end,
+    opts = {},
+    enabled = vim.fn.has('nvim-0.10.0') == 1,
   },
 
   {

@@ -1,6 +1,7 @@
 local Util = require('lazy.core.util')
 
 ---@class editor.util: LazyUtilCore
+---@field treesitter editor.util.treesitter
 ---@field format editor.util.format
 ---@field lsp editor.util.lsp
 local M = {}
@@ -239,34 +240,6 @@ function M.merge_tables(...)
     end
   end
   return result
-end
-
--- toggle all treesitter modules, if is buffter use TSBufToggle, else use TSToggle (global)
-function M.toggle_treesitter_modules()
-  if vim.fn.exists(':TSToggle') == 0 or vim.fn.exists(':TSBufToggle') == 0 then
-    Util.warn('TSToggle or TSBufToggle is not exists', { title = 'Tressitter' })
-    return
-  end
-
-  local modules = {
-    'highlight',
-    'indent',
-    'autotag',
-    'incremental_selection',
-    'textobjects',
-    'refactor',
-    'context_commentstring',
-    'fold',
-    'folding',
-  }
-
-  for _, module in ipairs(modules) do
-    if vim.bo.buflisted then
-      vim.cmd((':TSToggle %s'):format(module))
-    else
-      vim.cmd((':TSBufToggle %s'):format(module))
-    end
-  end
 end
 
 ---@param fn fun()

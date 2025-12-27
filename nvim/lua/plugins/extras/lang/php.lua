@@ -98,20 +98,13 @@ return {
   {
     -- Add a Treesitter parser for Laravel Blade to provide Blade syntax highlighting.
     'nvim-treesitter/nvim-treesitter',
-    opts = function(_, opts)
-      vim.list_extend(opts.ensure_installed, {
-        'blade',
-        'php_only',
-      })
-    end,
-    config = function(_, opts)
+    opts = { ensure_installed = { 'blade', 'php_only' } },
+    init = function()
       vim.filetype.add({
         pattern = {
           ['.*%.blade%.php'] = 'blade',
         },
       })
-
-      require('nvim-treesitter').setup(opts)
     end,
   },
 }

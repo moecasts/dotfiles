@@ -16,6 +16,11 @@ return {
   desc = 'Markdown support with enhanced features',
 
   {
+    'nvim-treesitter/nvim-treesitter',
+    opts = { ensure_installed = { 'markdown', 'markdown_inline' } },
+  },
+
+  {
     'stevearc/conform.nvim',
     optional = true,
     opts = {
