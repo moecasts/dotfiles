@@ -42,9 +42,7 @@ return {
                       icon = dev_icon
                     end
                   else
-                    icon = lspkind.symbolic(ctx.kind, {
-                      mode = 'symbol',
-                    })
+                    icon = lspkind.symbol_map[ctx.kind] or icon
                   end
 
                   return icon .. ctx.icon_gap
