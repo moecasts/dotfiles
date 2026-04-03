@@ -79,7 +79,7 @@ return {
   -- Ensure Go tools are installed
   {
     'williamboman/mason.nvim',
-    opts = { ensure_installed = { 'gofumpt', 'goimports', 'goimports-reviser' } },
+    opts = { ensure_installed = { 'golangci-lint', 'gofumpt', 'goimports' } },
   },
 
   -- formatter
@@ -88,7 +88,14 @@ return {
     optional = true,
     opts = {
       formatters_by_ft = {
-        go = { 'gofumpt', 'goimports', 'goimports-reviser' },
+        go = function(bufnr)
+          -- Use golangci-lint when .golangci.yml exists, fallback to gofumpt + goimports
+          local bufname = vim.api.nvim_buf_get_name(bufnr)
+          if vim.fs.root(bufname, { '.golangci.yml', '.golangci.yaml' }) then
+            return { 'golangci-lint' }
+          end
+          return { 'gofumpt', 'goimports' }
+        end,
       },
     },
   },
