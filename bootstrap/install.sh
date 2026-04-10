@@ -32,6 +32,11 @@ INSTALL_FD=false
 INSTALL_NVIM_SRC=false
 INSTALL_YAZI=false
 INSTALL_POSTMAN=false
+INSTALL_GHOSTTY=false
+INSTALL_CHROME=false
+INSTALL_OBSIDIAN=false
+INSTALL_TELEGRAM=false
+INSTALL_FUTU=false
 
 SUDO="sudo"
 if [ "$(id -u)" -eq 0 ]; then
@@ -65,6 +70,11 @@ Options:
   --nvim-src    Install Neovim from source (latest stable)
   --yazi        Install yazi (terminal file manager)
   --postman     Install Postman (API development platform)
+  --ghostty     Install Ghostty terminal emulator
+  --chrome      Install Google Chrome
+  --obsidian    Install Obsidian (note-taking app)
+  --telegram    Install Telegram
+  --futu        Install Futubull (stock trading app)
 If no options are provided, an interactive menu will be shown.'
       exit 0
       ;;
@@ -152,6 +162,26 @@ If no options are provided, an interactive menu will be shown.'
       INSTALL_ALL=false
       INSTALL_POSTMAN=true
       ;;
+    --ghostty)
+      INSTALL_ALL=false
+      INSTALL_GHOSTTY=true
+      ;;
+    --chrome)
+      INSTALL_ALL=false
+      INSTALL_CHROME=true
+      ;;
+    --obsidian)
+      INSTALL_ALL=false
+      INSTALL_OBSIDIAN=true
+      ;;
+    --telegram)
+      INSTALL_ALL=false
+      INSTALL_TELEGRAM=true
+      ;;
+    --futu)
+      INSTALL_ALL=false
+      INSTALL_FUTU=true
+      ;;
     *)
       echo "Unknown parameter: $1"
       exit 1
@@ -165,7 +195,7 @@ If no options are provided, an interactive menu will be shown.'
 probe_interactive() {
   if $INSTALL_ALL; then
     # Initialize all options to true (select all by default)
-    selected=(true true true true true true true true true true true true true true true true true true true true true)
+    selected=(true true true true true true true true true true true true true true true true true true true true true true true true true true)
 
     cursor=0
 
@@ -183,7 +213,7 @@ probe_interactive() {
     while true; do
       clear
       echo -e "Use arrow keys to navigate, space to select/deselect, enter to confirm:\n"
-      options=("Homebrew" "Oh My Zsh" "nvm" "Rust" "Go" "tmux" "fnm" "WeChat" "WeCom" "QQ" "NetEase Music" "WezTerm" "LazyGit" "fzf" "ripgrep" "Karabiner" "Rectangle" "fd" "Neovim (source)" "Yazi" "Postman")
+      options=("Homebrew" "Oh My Zsh" "nvm" "Rust" "Go" "tmux" "fnm" "WeChat" "WeCom" "QQ" "NetEase Music" "WezTerm" "LazyGit" "fzf" "ripgrep" "Karabiner" "Rectangle" "fd" "Neovim (source)" "Yazi" "Postman" "Ghostty" "Google Chrome" "Obsidian" "Telegram" "Futubull")
       echo "Please select components to install:"
 
       # Display option list
@@ -244,6 +274,11 @@ probe_interactive() {
         INSTALL_NVIM_SRC=${selected[18]}
         INSTALL_YAZI=${selected[19]}
         INSTALL_POSTMAN=${selected[20]}
+        INSTALL_GHOSTTY=${selected[21]}
+        INSTALL_CHROME=${selected[22]}
+        INSTALL_OBSIDIAN=${selected[23]}
+        INSTALL_TELEGRAM=${selected[24]}
+        INSTALL_FUTU=${selected[25]}
         INSTALL_ALL=false # 关闭全选模式
 
         echo -e "\n"
@@ -923,6 +958,99 @@ install_yazi() {
   backup_and_link "$SCRIPT_DIR/../yazi/yazi.toml" "$HOME/.config/yazi/yazi.toml"
 }
 
+install_ghostty() {
+  if [ "$OS" = "Darwin" ]; then
+    if ! command -v brew &>/dev/null; then
+      echo "Homebrew is required but not installed. Please install Homebrew first."
+      return 1
+    fi
+
+    if ! brew list --cask ghostty &>/dev/null; then
+      echo "Installing Ghostty..."
+      brew install --cask ghostty
+    else
+      echo "Ghostty is already installed."
+    fi
+
+    # Link Ghostty config (if present in repo)
+    backup_and_link "$SCRIPT_DIR/../ghostty/config" "$HOME/.config/ghostty/config"
+  else
+    echo "Ghostty installation via Homebrew is only supported on macOS."
+  fi
+}
+
+install_obsidian() {
+  if [ "$OS" = "Darwin" ]; then
+    if ! command -v brew &>/dev/null; then
+      echo "Homebrew is required but not installed. Please install Homebrew first."
+      return 1
+    fi
+
+    if ! brew list --cask obsidian &>/dev/null; then
+      echo "Installing Obsidian..."
+      brew install --cask obsidian
+    else
+      echo "Obsidian is already installed."
+    fi
+  else
+    echo "Obsidian installation via Homebrew is only supported on macOS."
+  fi
+}
+
+install_futu() {
+  if [ "$OS" = "Darwin" ]; then
+    if ! command -v brew &>/dev/null; then
+      echo "Homebrew is required but not installed. Please install Homebrew first."
+      return 1
+    fi
+
+    if ! brew list --cask futubull &>/dev/null; then
+      echo "Installing Futubull..."
+      brew install --cask futubull
+    else
+      echo "Futubull is already installed."
+    fi
+  else
+    echo "Futubull installation via Homebrew is only supported on macOS."
+  fi
+}
+
+install_telegram() {
+  if [ "$OS" = "Darwin" ]; then
+    if ! command -v brew &>/dev/null; then
+      echo "Homebrew is required but not installed. Please install Homebrew first."
+      return 1
+    fi
+
+    if ! brew list --cask telegram &>/dev/null; then
+      echo "Installing Telegram..."
+      brew install --cask telegram
+    else
+      echo "Telegram is already installed."
+    fi
+  else
+    echo "Telegram installation via Homebrew is only supported on macOS."
+  fi
+}
+
+install_chrome() {
+  if [ "$OS" = "Darwin" ]; then
+    if ! command -v brew &>/dev/null; then
+      echo "Homebrew is required but not installed. Please install Homebrew first."
+      return 1
+    fi
+
+    if ! brew list --cask google-chrome &>/dev/null; then
+      echo "Installing Google Chrome..."
+      brew install --cask google-chrome
+    else
+      echo "Google Chrome is already installed."
+    fi
+  else
+    echo "Google Chrome installation via Homebrew is only supported on macOS."
+  fi
+}
+
 install_postman() {
   if [ "$OS" = "Darwin" ]; then
     if ! command -v brew &>/dev/null; then
@@ -1101,6 +1229,26 @@ run() {
 
   if $INSTALL_POSTMAN || $INSTALL_ALL; then
     install_postman
+  fi
+
+  if $INSTALL_GHOSTTY || $INSTALL_ALL; then
+    install_ghostty
+  fi
+
+  if $INSTALL_CHROME || $INSTALL_ALL; then
+    install_chrome
+  fi
+
+  if $INSTALL_OBSIDIAN || $INSTALL_ALL; then
+    install_obsidian
+  fi
+
+  if $INSTALL_TELEGRAM || $INSTALL_ALL; then
+    install_telegram
+  fi
+
+  if $INSTALL_FUTU || $INSTALL_ALL; then
+    install_futu
   fi
 
   echo "Setup complete!"
