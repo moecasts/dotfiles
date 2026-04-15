@@ -23,3 +23,8 @@ window-padding-y = 16
 # cursor
 shell-integration-features = no-cursor
 cursor-style = block
+
+# ssh clipboard
+clipboard-read = allow
+clipboard-write = allow
+copy-on-select = clipboard
