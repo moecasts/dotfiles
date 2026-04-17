@@ -385,6 +385,8 @@ install_rust() {
 }
 
 install_go() {
+  local go_installed=false
+
   if ! command -v go &>/dev/null; then
     echo "Installing Go..."
     if [ "$OS" = "Darwin" ]; then
@@ -393,12 +395,28 @@ install_go() {
       curl -O https://dl.google.com/go/go1.20.5.linux-amd64.tar.gz
       $SUDO tar -C /usr/local -xzf go1.20.5.linux-amd64.tar.gz
       rm go1.20.5.linux-amd64.tar.gz
+      go_installed=true
+    fi
+  fi
+
+  if [ "$OS" != "Darwin" ]; then
+    if ! grep -q 'export PATH=$PATH:/usr/local/go/bin' "$ZSHRC_PATH" 2>/dev/null; then
       echo '
 # go
 export PATH=$PATH:/usr/local/go/bin
 ' >>$ZSHRC_PATH
-      source $ZSHRC_PATH
     fi
+  fi
+
+  if ! grep -q 'export PATH=$PATH:$HOME/go/bin' "$ZSHRC_PATH" 2>/dev/null; then
+    echo '
+# go
+export PATH=$PATH:$HOME/go/bin
+' >>$ZSHRC_PATH
+  fi
+
+  if [ "$go_installed" = true ]; then
+    source $ZSHRC_PATH
   fi
 }
 
@@ -498,7 +516,7 @@ install_fnm() {
 # fnm
 export PATH="$HOME/.local/share/fnm:$PATH"
 eval "$(fnm env --use-on-cd)"
-' >> "$ZSHRC_PATH"
+' >>"$ZSHRC_PATH"
 
     # Load fnm in current shell
     export PATH="$HOME/.local/share/fnm:$PATH"
