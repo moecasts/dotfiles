@@ -37,6 +37,9 @@ INSTALL_CHROME=false
 INSTALL_OBSIDIAN=false
 INSTALL_TELEGRAM=false
 INSTALL_FUTU=false
+INSTALL_DOCKER=false
+INSTALL_COLIMA=false
+INSTALL_IINA=false
 
 SUDO="sudo"
 if [ "$(id -u)" -eq 0 ]; then
@@ -75,6 +78,9 @@ Options:
   --obsidian    Install Obsidian (note-taking app)
   --telegram    Install Telegram
   --futu        Install Futubull (stock trading app)
+  --docker      Install Docker CLI and docker-compose
+  --colima      Install Colima (container runtime for macOS, installs Docker if needed)
+  --iina        Install IINA (modern media player for macOS)
 If no options are provided, an interactive menu will be shown.'
       exit 0
       ;;
@@ -182,6 +188,18 @@ If no options are provided, an interactive menu will be shown.'
       INSTALL_ALL=false
       INSTALL_FUTU=true
       ;;
+    --docker)
+      INSTALL_ALL=false
+      INSTALL_DOCKER=true
+      ;;
+    --colima)
+      INSTALL_ALL=false
+      INSTALL_COLIMA=true
+      ;;
+    --iina)
+      INSTALL_ALL=false
+      INSTALL_IINA=true
+      ;;
     *)
       echo "Unknown parameter: $1"
       exit 1
@@ -195,7 +213,7 @@ If no options are provided, an interactive menu will be shown.'
 probe_interactive() {
   if $INSTALL_ALL; then
     # Initialize all options to true (select all by default)
-    selected=(true true true true true true true true true true true true true true true true true true true true true true true true true true)
+    selected=(true true true true true true true true true true true true true true true true true true true true true true true true true true true true true)
 
     cursor=0
 
@@ -213,7 +231,7 @@ probe_interactive() {
     while true; do
       clear
       echo -e "Use arrow keys to navigate, space to select/deselect, enter to confirm:\n"
-      options=("Homebrew" "Oh My Zsh" "nvm" "Rust" "Go" "tmux" "fnm" "WeChat" "WeCom" "QQ" "NetEase Music" "WezTerm" "LazyGit" "fzf" "ripgrep" "Karabiner" "Rectangle" "fd" "Neovim (source)" "Yazi" "Postman" "Ghostty" "Google Chrome" "Obsidian" "Telegram" "Futubull")
+      options=("Homebrew" "Oh My Zsh" "nvm" "Rust" "Go" "tmux" "fnm" "WeChat" "WeCom" "QQ" "NetEase Music" "WezTerm" "LazyGit" "fzf" "ripgrep" "Karabiner" "Rectangle" "fd" "Neovim (source)" "Yazi" "Postman" "Ghostty" "Google Chrome" "Obsidian" "Telegram" "Futubull" "Docker" "Colima" "IINA")
       echo "Please select components to install:"
 
       # Display option list
@@ -279,6 +297,9 @@ probe_interactive() {
         INSTALL_OBSIDIAN=${selected[23]}
         INSTALL_TELEGRAM=${selected[24]}
         INSTALL_FUTU=${selected[25]}
+        INSTALL_DOCKER=${selected[26]}
+        INSTALL_COLIMA=${selected[27]}
+        INSTALL_IINA=${selected[28]}
         INSTALL_ALL=false # 关闭全选模式
 
         echo -e "\n"
@@ -997,6 +1018,74 @@ install_obsidian() {
   fi
 }
 
+install_docker() {
+  if [ "$OS" = "Darwin" ]; then
+    if ! command -v brew &>/dev/null; then
+      echo "Homebrew is required but not installed. Please install Homebrew first."
+      return 1
+    fi
+
+    if ! command -v docker &>/dev/null; then
+      echo "Installing Docker CLI..."
+      brew install docker
+    else
+      echo "Docker CLI is already installed."
+    fi
+
+    if ! command -v docker-compose &>/dev/null; then
+      echo "Installing docker-compose..."
+      brew install docker-compose
+    else
+      echo "docker-compose is already installed."
+    fi
+
+    # Link docker-compose as a Docker CLI plugin so `docker compose` works
+    mkdir -p ~/.docker/cli-plugins
+    ln -sfn "$(brew --prefix)/opt/docker-compose/bin/docker-compose" ~/.docker/cli-plugins/docker-compose
+  else
+    echo "Docker CLI installation via Homebrew is only supported on macOS."
+  fi
+}
+
+install_iina() {
+  if [ "$OS" = "Darwin" ]; then
+    if ! command -v brew &>/dev/null; then
+      echo "Homebrew is required but not installed. Please install Homebrew first."
+      return 1
+    fi
+
+    if ! brew list --cask iina &>/dev/null; then
+      echo "Installing IINA..."
+      brew install --cask iina
+    else
+      echo "IINA is already installed."
+    fi
+  else
+    echo "IINA installation via Homebrew is only supported on macOS."
+  fi
+}
+
+install_colima() {
+  if [ "$OS" = "Darwin" ]; then
+    if ! command -v brew &>/dev/null; then
+      echo "Homebrew is required but not installed. Please install Homebrew first."
+      return 1
+    fi
+
+    # Ensure Docker CLI and docker-compose are installed (required by colima)
+    install_docker
+
+    if ! command -v colima &>/dev/null; then
+      echo "Installing Colima..."
+      brew install colima
+    else
+      echo "Colima is already installed."
+    fi
+  else
+    echo "Colima installation via Homebrew is only supported on macOS."
+  fi
+}
+
 install_futu() {
   if [ "$OS" = "Darwin" ]; then
     if ! command -v brew &>/dev/null; then
@@ -1249,6 +1338,18 @@ run() {
 
   if $INSTALL_FUTU || $INSTALL_ALL; then
     install_futu
+  fi
+
+  if $INSTALL_DOCKER || $INSTALL_ALL; then
+    install_docker
+  fi
+
+  if $INSTALL_COLIMA || $INSTALL_ALL; then
+    install_colima
+  fi
+
+  if $INSTALL_IINA || $INSTALL_ALL; then
+    install_iina
   fi
 
   echo "Setup complete!"
