@@ -18,6 +18,7 @@ INSTALL_RUST=false
 INSTALL_GO=false
 INSTALL_TMUX=false
 INSTALL_FNM=false
+INSTALL_UV=false
 INSTALL_WECHAT=false
 INSTALL_WECOM=false
 INSTALL_QQ=false
@@ -59,6 +60,7 @@ Options:
   --rust        Install Rust programming language
   --go          Install Go programming language
   --fnm         Install Fast Node Manager (fnm)
+  --uv          Install uv Python package manager
   --wechat      Install WeChat
   --wecom       Install WeCom (WeChat Work)
   --qq          Install QQ
@@ -111,6 +113,10 @@ If no options are provided, an interactive menu will be shown.'
     --fnm)
       INSTALL_ALL=false
       INSTALL_FNM=true
+      ;;
+    --uv)
+      INSTALL_ALL=false
+      INSTALL_UV=true
       ;;
     --wechat)
       INSTALL_ALL=false
@@ -213,7 +219,7 @@ If no options are provided, an interactive menu will be shown.'
 probe_interactive() {
   if $INSTALL_ALL; then
     # Initialize all options to true (select all by default)
-    selected=(true true true true true true true true true true true true true true true true true true true true true true true true true true true true true)
+    selected=(true true true true true true true true true true true true true true true true true true true true true true true true true true true true true true)
 
     cursor=0
 
@@ -231,7 +237,7 @@ probe_interactive() {
     while true; do
       clear
       echo -e "Use arrow keys to navigate, space to select/deselect, enter to confirm:\n"
-      options=("Homebrew" "Oh My Zsh" "nvm" "Rust" "Go" "tmux" "fnm" "WeChat" "WeCom" "QQ" "NetEase Music" "WezTerm" "LazyGit" "fzf" "ripgrep" "Karabiner" "Rectangle" "fd" "Neovim (source)" "Yazi" "Postman" "Ghostty" "Google Chrome" "Obsidian" "Telegram" "Futubull" "Docker" "Colima" "IINA")
+      options=("Homebrew" "Oh My Zsh" "nvm" "Rust" "Go" "tmux" "fnm" "WeChat" "WeCom" "QQ" "NetEase Music" "WezTerm" "LazyGit" "fzf" "ripgrep" "Karabiner" "Rectangle" "fd" "Neovim (source)" "Yazi" "Postman" "Ghostty" "Google Chrome" "Obsidian" "Telegram" "Futubull" "Docker" "Colima" "IINA" "uv")
       echo "Please select components to install:"
 
       # Display option list
@@ -300,6 +306,7 @@ probe_interactive() {
         INSTALL_DOCKER=${selected[26]}
         INSTALL_COLIMA=${selected[27]}
         INSTALL_IINA=${selected[28]}
+        INSTALL_UV=${selected[29]}
         INSTALL_ALL=false # 关闭全选模式
 
         echo -e "\n"
@@ -525,6 +532,29 @@ eval "$(fnm env --use-on-cd)"
     # Install latest LTS Node version
     fnm install --lts
     fnm use lts-latest
+  fi
+}
+
+install_uv() {
+  if ! command -v uv &>/dev/null; then
+    echo "Installing uv..."
+    if ! (set -o pipefail; curl -LsSf https://astral.sh/uv/install.sh | env UV_NO_MODIFY_PATH=1 sh); then
+      echo "uv installation failed."
+      exit 1
+    fi
+
+    if ! grep -q 'export PATH="$HOME/.local/bin:$PATH"' "$ZSHRC_PATH" 2>/dev/null; then
+      echo '
+# uv
+export PATH="$HOME/.local/bin:$PATH"
+' >>"$ZSHRC_PATH"
+    fi
+
+    if [[ ":$PATH:" != *":$HOME/.local/bin:"* ]]; then
+      export PATH="$HOME/.local/bin:$PATH"
+    fi
+  else
+    echo "uv is already installed."
   fi
 }
 
@@ -1280,6 +1310,10 @@ run() {
 
   if $INSTALL_FNM || $INSTALL_ALL; then
     install_fnm
+  fi
+
+  if $INSTALL_UV || $INSTALL_ALL; then
+    install_uv
   fi
 
   if $INSTALL_WECHAT || $INSTALL_ALL; then
