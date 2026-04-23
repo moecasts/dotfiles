@@ -19,6 +19,7 @@ INSTALL_GO=false
 INSTALL_TMUX=false
 INSTALL_FNM=false
 INSTALL_UV=false
+INSTALL_FIREFOX=false
 INSTALL_WECHAT=false
 INSTALL_WECOM=false
 INSTALL_QQ=false
@@ -61,6 +62,7 @@ Options:
   --go          Install Go programming language
   --fnm         Install Fast Node Manager (fnm)
   --uv          Install uv Python package manager
+  --firefox     Install Firefox
   --wechat      Install WeChat
   --wecom       Install WeCom (WeChat Work)
   --qq          Install QQ
@@ -117,6 +119,10 @@ If no options are provided, an interactive menu will be shown.'
     --uv)
       INSTALL_ALL=false
       INSTALL_UV=true
+      ;;
+    --firefox)
+      INSTALL_ALL=false
+      INSTALL_FIREFOX=true
       ;;
     --wechat)
       INSTALL_ALL=false
@@ -219,7 +225,7 @@ If no options are provided, an interactive menu will be shown.'
 probe_interactive() {
   if $INSTALL_ALL; then
     # Initialize all options to true (select all by default)
-    selected=(true true true true true true true true true true true true true true true true true true true true true true true true true true true true true true)
+    selected=(true true true true true true true true true true true true true true true true true true true true true true true true true true true true true true true)
 
     cursor=0
 
@@ -237,7 +243,7 @@ probe_interactive() {
     while true; do
       clear
       echo -e "Use arrow keys to navigate, space to select/deselect, enter to confirm:\n"
-      options=("Homebrew" "Oh My Zsh" "nvm" "Rust" "Go" "tmux" "fnm" "WeChat" "WeCom" "QQ" "NetEase Music" "WezTerm" "LazyGit" "fzf" "ripgrep" "Karabiner" "Rectangle" "fd" "Neovim (source)" "Yazi" "Postman" "Ghostty" "Google Chrome" "Obsidian" "Telegram" "Futubull" "Docker" "Colima" "IINA" "uv")
+      options=("Homebrew" "Oh My Zsh" "nvm" "Rust" "Go" "tmux" "fnm" "WeChat" "WeCom" "QQ" "NetEase Music" "WezTerm" "LazyGit" "fzf" "ripgrep" "Karabiner" "Rectangle" "fd" "Neovim (source)" "Yazi" "Postman" "Ghostty" "Google Chrome" "Obsidian" "Telegram" "Futubull" "Docker" "Colima" "IINA" "uv" "Firefox")
       echo "Please select components to install:"
 
       # Display option list
@@ -307,6 +313,7 @@ probe_interactive() {
         INSTALL_COLIMA=${selected[27]}
         INSTALL_IINA=${selected[28]}
         INSTALL_UV=${selected[29]}
+        INSTALL_FIREFOX=${selected[30]}
         INSTALL_ALL=false # 关闭全选模式
 
         echo -e "\n"
@@ -555,6 +562,24 @@ export PATH="$HOME/.local/bin:$PATH"
     fi
   else
     echo "uv is already installed."
+  fi
+}
+
+install_firefox() {
+  if [ "$OS" = "Darwin" ]; then
+    if ! command -v brew &>/dev/null; then
+      echo "Homebrew is required but not installed. Please install Homebrew first."
+      return 1
+    fi
+
+    if ! brew list --cask firefox &>/dev/null; then
+      echo "Installing Firefox..."
+      brew install --cask firefox
+    else
+      echo "Firefox is already installed."
+    fi
+  else
+    echo "Firefox installation via Homebrew is only supported on macOS."
   fi
 }
 
@@ -1314,6 +1339,10 @@ run() {
 
   if $INSTALL_UV || $INSTALL_ALL; then
     install_uv
+  fi
+
+  if $INSTALL_FIREFOX || $INSTALL_ALL; then
+    install_firefox
   fi
 
   if $INSTALL_WECHAT || $INSTALL_ALL; then
