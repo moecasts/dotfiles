@@ -20,6 +20,7 @@ INSTALL_TMUX=false
 INSTALL_FNM=false
 INSTALL_UV=false
 INSTALL_FIREFOX=false
+INSTALL_ANDROID_STUDIO=false
 INSTALL_WECHAT=false
 INSTALL_WECOM=false
 INSTALL_QQ=false
@@ -63,6 +64,7 @@ Options:
   --fnm         Install Fast Node Manager (fnm)
   --uv          Install uv Python package manager
   --firefox     Install Firefox
+  --android-studio Install Android Studio
   --wechat      Install WeChat
   --wecom       Install WeCom (WeChat Work)
   --qq          Install QQ
@@ -123,6 +125,10 @@ If no options are provided, an interactive menu will be shown.'
     --firefox)
       INSTALL_ALL=false
       INSTALL_FIREFOX=true
+      ;;
+    --android-studio)
+      INSTALL_ALL=false
+      INSTALL_ANDROID_STUDIO=true
       ;;
     --wechat)
       INSTALL_ALL=false
@@ -225,7 +231,7 @@ If no options are provided, an interactive menu will be shown.'
 probe_interactive() {
   if $INSTALL_ALL; then
     # Initialize all options to true (select all by default)
-    selected=(true true true true true true true true true true true true true true true true true true true true true true true true true true true true true true true)
+    selected=(true true true true true true true true true true true true true true true true true true true true true true true true true true true true true true true true)
 
     cursor=0
 
@@ -243,7 +249,7 @@ probe_interactive() {
     while true; do
       clear
       echo -e "Use arrow keys to navigate, space to select/deselect, enter to confirm:\n"
-      options=("Homebrew" "Oh My Zsh" "nvm" "Rust" "Go" "tmux" "fnm" "WeChat" "WeCom" "QQ" "NetEase Music" "WezTerm" "LazyGit" "fzf" "ripgrep" "Karabiner" "Rectangle" "fd" "Neovim (source)" "Yazi" "Postman" "Ghostty" "Google Chrome" "Obsidian" "Telegram" "Futubull" "Docker" "Colima" "IINA" "uv" "Firefox")
+      options=("Homebrew" "Oh My Zsh" "nvm" "Rust" "Go" "tmux" "fnm" "WeChat" "WeCom" "QQ" "NetEase Music" "WezTerm" "LazyGit" "fzf" "ripgrep" "Karabiner" "Rectangle" "fd" "Neovim (source)" "Yazi" "Postman" "Ghostty" "Google Chrome" "Obsidian" "Telegram" "Futubull" "Docker" "Colima" "IINA" "uv" "Firefox" "Android Studio")
       echo "Please select components to install:"
 
       # Display option list
@@ -314,6 +320,7 @@ probe_interactive() {
         INSTALL_IINA=${selected[28]}
         INSTALL_UV=${selected[29]}
         INSTALL_FIREFOX=${selected[30]}
+        INSTALL_ANDROID_STUDIO=${selected[31]}
         INSTALL_ALL=false # 关闭全选模式
 
         echo -e "\n"
@@ -580,6 +587,24 @@ install_firefox() {
     fi
   else
     echo "Firefox installation via Homebrew is only supported on macOS."
+  fi
+}
+
+install_android_studio() {
+  if [ "$OS" = "Darwin" ]; then
+    if ! command -v brew &>/dev/null; then
+      echo "Homebrew is required but not installed. Please install Homebrew first."
+      return 1
+    fi
+
+    if ! brew list --cask android-studio &>/dev/null; then
+      echo "Installing Android Studio..."
+      brew install --cask android-studio
+    else
+      echo "Android Studio is already installed."
+    fi
+  else
+    echo "Android Studio installation via Homebrew is only supported on macOS."
   fi
 }
 
@@ -1343,6 +1368,10 @@ run() {
 
   if $INSTALL_FIREFOX || $INSTALL_ALL; then
     install_firefox
+  fi
+
+  if $INSTALL_ANDROID_STUDIO || $INSTALL_ALL; then
+    install_android_studio
   fi
 
   if $INSTALL_WECHAT || $INSTALL_ALL; then
