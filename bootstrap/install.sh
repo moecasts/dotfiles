@@ -43,6 +43,7 @@ INSTALL_FUTU=false
 INSTALL_DOCKER=false
 INSTALL_COLIMA=false
 INSTALL_IINA=false
+INSTALL_MACZIP=false
 
 SUDO="sudo"
 if [ "$(id -u)" -eq 0 ]; then
@@ -87,6 +88,7 @@ Options:
   --docker      Install Docker CLI and docker-compose
   --colima      Install Colima (container runtime for macOS, installs Docker if needed)
   --iina        Install IINA (modern media player for macOS)
+  --maczip      Install MacZip
 If no options are provided, an interactive menu will be shown.'
       exit 0
       ;;
@@ -218,6 +220,10 @@ If no options are provided, an interactive menu will be shown.'
       INSTALL_ALL=false
       INSTALL_IINA=true
       ;;
+    --maczip)
+      INSTALL_ALL=false
+      INSTALL_MACZIP=true
+      ;;
     *)
       echo "Unknown parameter: $1"
       exit 1
@@ -231,7 +237,7 @@ If no options are provided, an interactive menu will be shown.'
 probe_interactive() {
   if $INSTALL_ALL; then
     # Initialize all options to true (select all by default)
-    selected=(true true true true true true true true true true true true true true true true true true true true true true true true true true true true true true true true)
+    selected=(true true true true true true true true true true true true true true true true true true true true true true true true true true true true true true true true true)
 
     cursor=0
 
@@ -249,7 +255,7 @@ probe_interactive() {
     while true; do
       clear
       echo -e "Use arrow keys to navigate, space to select/deselect, enter to confirm:\n"
-      options=("Homebrew" "Oh My Zsh" "nvm" "Rust" "Go" "tmux" "fnm" "WeChat" "WeCom" "QQ" "NetEase Music" "WezTerm" "LazyGit" "fzf" "ripgrep" "Karabiner" "Rectangle" "fd" "Neovim (source)" "Yazi" "Postman" "Ghostty" "Google Chrome" "Obsidian" "Telegram" "Futubull" "Docker" "Colima" "IINA" "uv" "Firefox" "Android Studio")
+      options=("Homebrew" "Oh My Zsh" "nvm" "Rust" "Go" "tmux" "fnm" "WeChat" "WeCom" "QQ" "NetEase Music" "WezTerm" "LazyGit" "fzf" "ripgrep" "Karabiner" "Rectangle" "fd" "Neovim (source)" "Yazi" "Postman" "Ghostty" "Google Chrome" "Obsidian" "Telegram" "Futubull" "Docker" "Colima" "IINA" "uv" "Firefox" "Android Studio" "MacZip")
       echo "Please select components to install:"
 
       # Display option list
@@ -321,6 +327,7 @@ probe_interactive() {
         INSTALL_UV=${selected[29]}
         INSTALL_FIREFOX=${selected[30]}
         INSTALL_ANDROID_STUDIO=${selected[31]}
+        INSTALL_MACZIP=${selected[32]}
         INSTALL_ALL=false # 关闭全选模式
 
         echo -e "\n"
@@ -1163,6 +1170,24 @@ install_iina() {
   fi
 }
 
+install_maczip() {
+  if [ "$OS" = "Darwin" ]; then
+    if ! command -v brew &>/dev/null; then
+      echo "Homebrew is required but not installed. Please install Homebrew first."
+      return 1
+    fi
+
+    if ! brew list --cask maczip &>/dev/null; then
+      echo "Installing MacZip..."
+      brew install --cask maczip
+    else
+      echo "MacZip is already installed."
+    fi
+  else
+    echo "MacZip installation via Homebrew is only supported on macOS."
+  fi
+}
+
 install_colima() {
   if [ "$OS" = "Darwin" ]; then
     if ! command -v brew &>/dev/null; then
@@ -1460,6 +1485,10 @@ run() {
 
   if $INSTALL_IINA || $INSTALL_ALL; then
     install_iina
+  fi
+
+  if $INSTALL_MACZIP || $INSTALL_ALL; then
+    install_maczip
   fi
 
   echo "Setup complete!"
