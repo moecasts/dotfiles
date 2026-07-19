@@ -1,3 +1,75 @@
+local ts_root_markers = { 'package-lock.json', 'yarn.lock', 'pnpm-lock.yaml', 'bun.lockb', 'bun.lock' }
+
+---@param bufnr integer
+---@return string?
+local function typescript_root(bufnr)
+  local deno_root = vim.fs.root(bufnr, { 'deno.json', 'deno.jsonc' })
+  local deno_lock_root = vim.fs.root(bufnr, { 'deno.lock' })
+  local root_dir = vim.fs.root(bufnr, { ts_root_markers, { '.git' } })
+
+  if deno_lock_root and (not root_dir or #deno_lock_root > #root_dir) then
+    return
+  end
+  if deno_root and (not root_dir or #deno_root >= #root_dir) then
+    return
+  end
+
+  return root_dir or vim.fn.getcwd()
+end
+
+---@param root_dir string
+---@return boolean
+local function uses_typescript_7(root_dir)
+  local package_json = root_dir .. '/node_modules/typescript/package.json'
+  local ok, lines = pcall(vim.fn.readfile, package_json)
+  if not ok then
+    return false
+  end
+
+  local ok_json, package = pcall(vim.json.decode, table.concat(lines, '\n'))
+  local version = ok_json and package.version
+  if type(version) ~= 'string' then
+    return false
+  end
+
+  return tonumber(version:match('^(%d+)')) == 7
+end
+
+---@param root_dir string
+---@return boolean
+local function needs_legacy_typescript_server(root_dir)
+  local ok, lines = pcall(vim.fn.readfile, root_dir .. '/package.json')
+  if not ok then
+    return false
+  end
+
+  local ok_json, package = pcall(vim.json.decode, table.concat(lines, '\n'))
+  if not ok_json then
+    return false
+  end
+
+  -- These tools embed the legacy TypeScript language service and cannot use
+  -- TypeScript 7's native LSP yet.
+  local embedded_language_packages = { 'vue', '@angular/core', 'astro', 'svelte', '@mdx-js/mdx' }
+  for _, dependency_type in ipairs({ 'dependencies', 'devDependencies', 'peerDependencies' }) do
+    local dependencies = package[dependency_type] or {}
+    for _, dependency in ipairs(embedded_language_packages) do
+      if dependencies[dependency] then
+        return true
+      end
+    end
+  end
+
+  return false
+end
+
+---@param bufnr integer
+---@return boolean
+local function is_typescript_7_project(bufnr)
+  local root_dir = typescript_root(bufnr)
+  return root_dir ~= nil and uses_typescript_7(root_dir) and not needs_legacy_typescript_server(root_dir)
+end
+
 return {
   recommended = function()
     return Editor.extras.wants({
@@ -27,6 +99,28 @@ return {
         ts_ls = {
           enabled = false,
         },
+        -- TypeScript 7 implements LSP natively. Keep the legacy vtsls bridge
+        -- for every other project, since it speaks the old tsserver protocol.
+        tsgo = {
+          mason = false,
+          cmd = function(dispatchers, config)
+            local tsc = config.root_dir .. '/node_modules/.bin/tsc'
+            return vim.lsp.rpc.start({ tsc, '--lsp', '--stdio' }, dispatchers)
+          end,
+          filetypes = {
+            'javascript',
+            'javascriptreact',
+            'javascript.jsx',
+            'typescript',
+            'typescriptreact',
+            'typescript.tsx',
+          },
+          root_dir = function(bufnr, on_dir)
+            if is_typescript_7_project(bufnr) then
+              on_dir(typescript_root(bufnr))
+            end
+          end,
+        },
         vtsls = {
           -- explicitly add default filetypes, so that we can extend
           -- them in related extras
@@ -38,6 +132,11 @@ return {
             'typescriptreact',
             'typescript.tsx',
           },
+          root_dir = function(bufnr, on_dir)
+            if not is_typescript_7_project(bufnr) then
+              on_dir(typescript_root(bufnr))
+            end
+          end,
           settings = {
             complete_function_calls = true,
             vtsls = {
