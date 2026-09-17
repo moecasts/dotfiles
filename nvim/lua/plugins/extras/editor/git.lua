@@ -36,7 +36,7 @@ return {
       },
       current_line_blame = true,
       current_line_blame_opts = {
-        delay = 300,
+        delay = 800,
       },
       on_attach = function(buffer)
         local gs = package.loaded.gitsigns

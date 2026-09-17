@@ -1,7 +1,7 @@
 return {
   {
     'kawre/leetcode.nvim',
-    event = 'VeryLazy',
+    cmd = 'Leet',
     build = ':TSUpdate html',
     dependencies = {
       'nvim-telescope/telescope.nvim',

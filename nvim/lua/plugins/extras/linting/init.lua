@@ -2,7 +2,7 @@ return {
   -- lint
   {
     'mfussenegger/nvim-lint',
-    -- event = "LazyFile",
+    event = { 'BufReadPost', 'BufNewFile' },
     opts = {
       -- Event to trigger linters
       events = {
