@@ -99,14 +99,9 @@ return {
         ts_ls = {
           enabled = false,
         },
-        -- TypeScript 7 implements LSP natively. Keep the legacy vtsls bridge
-        -- for every other project, since it speaks the old tsserver protocol.
-        tsgo = {
-          mason = false,
-          cmd = function(dispatchers, config)
-            local tsc = config.root_dir .. '/node_modules/.bin/tsc'
-            return vim.lsp.rpc.start({ tsc, '--lsp', '--stdio' }, dispatchers)
-          end,
+        -- TypeScript 7+ implements LSP natively via `tsc --lsp`. Keep the
+        -- legacy vtsls bridge for every other project.
+        tsc = {
           filetypes = {
             'javascript',
             'javascriptreact',
@@ -115,11 +110,22 @@ return {
             'typescriptreact',
             'typescript.tsx',
           },
-          root_dir = function(bufnr, on_dir)
-            if is_typescript_7_project(bufnr) then
-              on_dir(typescript_root(bufnr))
-            end
-          end,
+          ---@type lspconfig.settings.tsc
+          settings = {
+            ['js/ts'] = {
+              inlayHints = {
+                enumMemberValues = { enabled = true },
+                functionLikeReturnTypes = { enabled = true },
+                parameterNames = {
+                  enabled = 'literals',
+                  suppressWhenArgumentMatchesName = true,
+                },
+                parameterTypes = { enabled = true },
+                propertyDeclarationTypes = { enabled = true },
+                variableTypes = { enabled = false },
+              },
+            },
+          },
         },
         vtsls = {
           -- explicitly add default filetypes, so that we can extend
@@ -241,6 +247,20 @@ return {
         ts_ls = function()
           -- disable tsserver
           return true
+        end,
+        -- Keep lspconfig's default tsc root_dir so it can resolve and cache
+        -- the workspace-local TypeScript 7 binary. Only gate attachment.
+        tsc = function(_, opts)
+          local default_root_dir = vim.lsp.config.tsc and vim.lsp.config.tsc.root_dir
+          opts.root_dir = function(bufnr, on_dir)
+            if not is_typescript_7_project(bufnr) then
+              return
+            end
+            if type(default_root_dir) == 'function' then
+              return default_root_dir(bufnr, on_dir)
+            end
+            on_dir(typescript_root(bufnr))
+          end
         end,
         vtsls = function(_, opts)
           -- Editor.lsp.on_attach(function(client, buffer)
