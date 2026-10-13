@@ -27,6 +27,7 @@ INSTALL_QQ=false
 INSTALL_NETEASE_MUSIC=false
 INSTALL_WEZTERM=false
 INSTALL_LAZYGIT=false
+INSTALL_PI=false
 INSTALL_FZF=false
 INSTALL_RIPGREP=false
 INSTALL_KARABINER=false
@@ -72,6 +73,7 @@ Options:
   --netease     Install NetEase Music
   --wezterm     Install WezTerm terminal
   --lazygit     Install LazyGit (Git UI)
+  --pi          Sync pi coding agent packages
   --fzf         Install fzf (Fuzzy finder)
   --ripgrep     Install ripgrep (Fast text search)
   --karabiner   Install Karabiner-Elements (keyboard customizer)
@@ -155,6 +157,10 @@ If no options are provided, an interactive menu will be shown.'
     --lazygit)
       INSTALL_ALL=false
       INSTALL_LAZYGIT=true
+      ;;
+    --pi)
+      INSTALL_ALL=false
+      INSTALL_PI=true
       ;;
     --fzf)
       INSTALL_ALL=false
@@ -732,6 +738,51 @@ install_wezterm() {
   else
     echo "WezTerm installation is only supported on macOS with Homebrew."
   fi
+}
+
+install_pi() {
+  # Sync pi packages declared in pi/package.json (Array<{ name, repo }>).
+  # Live ~/.pi/agent/settings.json is machine-local and never linked or overwritten.
+  if ! command -v pi &>/dev/null; then
+    echo "pi CLI not found, skip package sync."
+    echo "Install it first: curl -fsSL https://pi.dev/install.sh | sh"
+    return 1
+  fi
+
+  local pi_package_json="$SCRIPT_DIR/../pi/package.json"
+  if [ ! -f "$pi_package_json" ]; then
+    echo "pi/package.json not found, skip."
+    return 0
+  fi
+
+  # Extract "repo" values from the self-authored package.json (no jq dependency)
+  local repos
+  repos=$(grep -o '"repo"[[:space:]]*:[[:space:]]*"[^"]*"' "$pi_package_json" | sed -E 's/.*:[[:space:]]*"([^"]*)"/\1/')
+  if [ -z "$repos" ]; then
+    echo "No packages declared in pi/package.json, skip."
+    return 0
+  fi
+
+  echo "$repos" | while read -r repo; do
+    [ -z "$repo" ] && continue
+    echo "Installing pi package: $repo"
+    pi install "$repo"
+  done
+
+  # Deploy themes (pi only reads theme files, never writes them)
+  local pi_themes_dir="$SCRIPT_DIR/../pi/themes"
+  if [ -d "$pi_themes_dir" ]; then
+    mkdir -p "$HOME/.pi/agent/themes"
+    local theme_file
+    for theme_file in "$pi_themes_dir"/*.json; do
+      [ -e "$theme_file" ] || continue
+      echo "Deploying theme: $(basename "$theme_file")"
+      cp "$theme_file" "$HOME/.pi/agent/themes/"
+    done
+  fi
+
+  echo "Pi packages synced:"
+  pi list
 }
 
 install_lazygit() {
@@ -1421,6 +1472,10 @@ run() {
 
   if $INSTALL_LAZYGIT || $INSTALL_ALL; then
     install_lazygit
+  fi
+
+  if $INSTALL_PI || $INSTALL_ALL; then
+    install_pi
   fi
 
   if $INSTALL_FZF || $INSTALL_ALL; then

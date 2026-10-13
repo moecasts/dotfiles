@@ -1,0 +1,7 @@
+[
+  { "name": "pi-context", "repo": "npm:pi-context" },
+  { "name": "pi-statusline", "repo": "npm:pi-statusline" },
+  { "name": "i-have-adhd", "repo": "https://github.com/ayghri/i-have-adhd" },
+  { "name": "@tintinweb/pi-subagents", "repo": "npm:@tintinweb/pi-subagents" },
+  { "name": "pi-web-access", "repo": "npm:pi-web-access" }
+]
