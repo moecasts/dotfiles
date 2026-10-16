@@ -3,5 +3,9 @@
   { "name": "pi-statusline", "repo": "npm:pi-statusline" },
   { "name": "i-have-adhd", "repo": "https://github.com/ayghri/i-have-adhd" },
   { "name": "@tintinweb/pi-subagents", "repo": "npm:@tintinweb/pi-subagents" },
-  { "name": "pi-web-access", "repo": "npm:pi-web-access" }
+  { "name": "pi-web-access", "repo": "npm:pi-web-access" },
+  { "name": "pi-clinepass-provider", "repo": "npm:pi-clinepass-provider" },
+  { "name": "pi-goal-x", "repo": "npm:pi-goal-x" },
+  { "name": "@cocasts/pi-image-view", "repo": "npm:@cocasts/pi-image-view" },
+  { "name": "@cocasts/pi-themes", "repo": "npm:@cocasts/pi-themes" }
 ]
